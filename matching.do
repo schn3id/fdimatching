@@ -30,6 +30,7 @@ legend(order(1 "control" 2 "treated")) xtitle("prop score")
 
 *shows bad overlap, need better X, dont use exports good results 
 drop pscore
+
 logit FDI2016 TFP2015 logemp2015 logwages2015 i.PORT i.OWN
 predict pscore
 twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
@@ -43,8 +44,22 @@ twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
 legend(order(1 "control" 2 "treated")) xtitle("prop score")
 */
 
+global S " i.OWN i.TECH PORT"
+global P " logemp2015 DEBTS2015 EXP2015 RD2015 logwages2015"
 
-teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015 TFP2015  i.PORT i.OWN), nneighbor(3)
+ cap drop osa1 // overlap balance
+cap drop p1 // to save pscore 
+teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015 TFP2015  i.PORT i.OWN),  osample(osa1) generate(p1)
+teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
+graph export overlap_a1.pdf, as(pdf) replace
 tebalance summarize
 
-teffects overlap
+ cap drop osa1 // overlap balance
+cap drop p1 // to save pscore 
+teffects psmatch (logwages2017) (FDI2016 $S $P ),  osample(osa1) generate(p1)
+teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
+graph export overlap_a1.pdf, as(pdf) replace
+tebalance summarize
+
+
+
