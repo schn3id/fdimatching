@@ -1,7 +1,10 @@
 /*******************************************************************************
 								PSM DO-FILE
 ********************************************************************************
-*nelly hör auf mein dokument kaputtzumachen													   Applied Microeconometrics
+*nelly hör auf mein dokument kaputtzumachen
+*selber
+
+Applied Microeconometrics
 															   Empirical Project
 																	  Do-File 03
 		
