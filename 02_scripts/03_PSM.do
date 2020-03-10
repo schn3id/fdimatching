@@ -130,7 +130,7 @@ teffects psmatch (logwages2017) (FDI2016 $S $P ),  osample(osa1) generate(p1)
 teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
 graph export overlap_a1.pdf, as(pdf) replace
 tebalance summarize
-	*this is a change 
+
 	
 *------------------------------------------------------------------------------*
 *	PART 2.2: Estimation using ... estimator
