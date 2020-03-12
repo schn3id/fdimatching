@@ -3,6 +3,7 @@
 ********************************************************************************
 *nelly hör auf mein dokument kaputtzumachen
 *selber
+*hört auf euch zu streiten
 
 Applied Microeconometrics
 															   Empirical Project
