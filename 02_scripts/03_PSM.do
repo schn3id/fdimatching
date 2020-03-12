@@ -1,9 +1,7 @@
 /*******************************************************************************
 								PSM DO-FILE
 ********************************************************************************
-*nelly hör auf mein dokument kaputtzumachen
-*selber
-*hört auf euch zu streiten
+*seid doch alle doof
 
 Applied Microeconometrics
 															   Empirical Project
