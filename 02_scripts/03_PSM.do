@@ -2,6 +2,7 @@
 								PSM DO-FILE
 ********************************************************************************
 *seid doch alle doof
+*selber
 
 Applied Microeconometrics
 															   Empirical Project
