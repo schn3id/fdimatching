@@ -3,7 +3,6 @@
 ********************************************************************************
 *seid doch alle doof
 *selber
-*Thea Kommentar*
 Applied Microeconometrics
 															   Empirical Project
 																	  Do-File 03
