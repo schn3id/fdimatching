@@ -46,6 +46,17 @@ iebaltab 	logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, ///
 //			By FDI type (treatment arms)
 iebaltab 	logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, ///
 			grpvar(FDITYPE2016) save($results\baltest_bytype_pre.xlsx)	
+
+			
+//	Density plots comparing tratment and control groups for selected varaibles
+//	Export intensity			
+	twoway kdensity EXP2015 if FDI2016==0 || kdensity EXP2015 if FDI2016==1, ///
+	legend(order(1 "control" 2 "treated"))
+
+//	Firm size	
+	twoway kdensity logemp2015 if FDI2016==0 || kdensity logemp2015 if FDI2016==1, ///
+	legend(order(1 "control" 2 "treated"))			
+			
 			
 *------------------------------------------------------------------------------*
 *	PART 2.1: Post-Treatment
