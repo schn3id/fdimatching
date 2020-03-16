@@ -117,7 +117,8 @@ global P " logemp2015 DEBTS2015 EXP2015 RD2015 logwages2015"
 *smol model
  cap drop osa1 // overlap balance
 cap drop p1 // to save pscore 
-teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015 TFP2015  i.PORT i.OWN),  osample(osa1) generate(p1)
+*keep wages to controll for pre*
+teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015  TFP2015  i.PORT i.OWN),  osample(osa1) generate(p1)
 teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
 graph export overlap_a1.pdf, as(pdf) replace
 tebalance summarize
@@ -127,7 +128,7 @@ tebalance summarize
 
  cap drop osa1 // overlap balance
 cap drop p1 // to save pscore 
-teffects psmatch (logwages2017) (FDI2016 $S $P ),  osample(osa1) generate(p1)
+teffects psmatch (logwages2017) (FDI2016  i.TECH i.PORT logemp2015 DEBTS2015 EXP2015 RD2015 logwages2015),  osample(osa1) generate(p1)
 teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
 graph export overlap_a1.pdf, as(pdf) replace
 tebalance summarize
