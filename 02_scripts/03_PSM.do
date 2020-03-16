@@ -157,8 +157,7 @@ generate logexp2015 = log(EXP2015)
 cap drop osa1 // overlap balance
 cap drop p1 // to save pscore 
 cap teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015  TFP2015 logexp2015 i.PORT i.OWN, probit), osample(osa3) generate(p3)
-drop if osa3==1
-teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015  TFP2015 logexp2015 i.PORT i.OWN, probit), generate (p3)
+teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015  TFP2015 logexp2015 i.PORT i.OWN, probit) if osa3==0, generate (p3) 
 teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
 graph export overlap_a1.pdf, as(pdf) replace
 tebalance summarize				
