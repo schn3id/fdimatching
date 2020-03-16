@@ -32,12 +32,13 @@
 	global output	"$root\03_output"
 	global results	"$root\04_results"
 	
-
+	use "$input\FDI_project"
+	
 ********************************************************************************
 *			PART 2: Descriptive Analysis
 ********************************************************************************
 /*	
-	use "$input\FDI_project"
+"
 	do "$02_scripts\02_Descriptive Analysis"
 	
 

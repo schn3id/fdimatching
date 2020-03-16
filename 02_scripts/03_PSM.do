@@ -1,9 +1,6 @@
 /*******************************************************************************
 								PSM DO-FILE
 ********************************************************************************
-*seid doch alle doof
-*selber
-
 Applied Microeconometrics
 															   Empirical Project
 																	  Do-File 03
@@ -51,6 +48,7 @@ Applied Microeconometrics
 	predict pscore
 	twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
 	legend(order(1 "control" 2 "treated")) xtitle("prop. score")
+
 //	--> Best overlap with most complete model
 
 
