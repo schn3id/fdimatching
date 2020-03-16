@@ -135,13 +135,31 @@ tebalance summarize
 
 	
 *------------------------------------------------------------------------------*
-*	PART 2.2: Estimation using ... estimator
+*	PART 2.2: Estimation using psmatching with probit estimator
 *------------------------------------------------------------------------------*
 
+cap drop osa1 // overlap balance
+cap drop p1 // to save pscore 
+teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015  TFP2015 EXP2015 i.PORT i.OWN, probit), osample(osa1) generate(p1)
+teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
+graph export overlap_a1.pdf, as(pdf) replace
+tebalance summarize
+
+generate logexp2015 = log(EXP2015)
+
+cap drop osa1 // overlap balance
+cap drop p1 // to save pscore 
+teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015  TFP2015 c.EXP2015##c.EXP2015 i.PORT i.OWN, probit), osample(osa2) generate(p2)
+teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
+graph export overlap_a1.pdf, as(pdf) replace
+tebalance summarize		
 			
-			
-			
-			
+cap drop osa1 // overlap balance
+cap drop p1 // to save pscore 
+teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015  TFP2015 c.EXP2015##c.EXP2015 i.PORT i.OWN, probit), osample(osa3) generate(p3)
+teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
+graph export overlap_a1.pdf, as(pdf) replace
+tebalance summarize			
 			
 			
 			
