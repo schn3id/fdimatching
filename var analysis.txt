@@ -1,0 +1,15 @@
+bad vars (not normally distributed
+
+exp    if you have low export youre 	unlikely to get FDI **
+Tech   if you are high tech youre 	unlikely to get FDI *
+
+
+relevant 
+POrt 	if you dont have a prot 	less likely to get FDI *
+logemp
+OWN (state somewhat more likely to get FDI)
+
+
+irellevant 
+DEBTS
+RD 

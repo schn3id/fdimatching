@@ -110,8 +110,9 @@ summarize pscore FDI2016 if strata==5 & FDI2016==1
 *	PART 2.1: Estimation using ... estimator
 *------------------------------------------------------------------------------*
 
-global S " i.OWN i.TECH PORT"
-global P " logemp2015 DEBTS2015 EXP2015 RD2015 logwages2015"
+	global CAT " OWN  PORT"
+	global CON " logemp2015 DEBTS2015 RD2015 logwages2015"
+	global DIF "TECH EXP2015"
 
 
 *smol model
@@ -162,8 +163,77 @@ teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
 graph export overlap_a1.pdf, as(pdf) replace
 tebalance summarize				
 			
+*Interactions for better pscores*			
 			
+cap drop osa1 // overlap balance
+cap drop p1 // to save pscore 
+teffects psmatch (logwages2017) (FDI2016   c.($P)#i.($S) ) if osa1=0 ,  osample(osa1) generate(p1)
+teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
+graph export overlap_a1.pdf, as(pdf) replace
+tebalance summarize
 			
+cap teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015  TFP2015 logexp2015 i.PORT i.OWN, probit), osample(osa3) generate(p3)
+teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015  TFP2015 logexp2015 i.PORT i.OWN, probit) if osa3==0, generate (p3) 
+teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
+graph export overlap_a1.pdf, as(pdf) replace
+tebalance summarize				
 			
-			
-			
+*Interactions for better pscores*			
+
+
+		
+cap drop osa1 // overlap balance
+cap drop p1 // to save pscore 
+teffects psmatch (logwages2017) (FDI2016   c.($P)#i.($S)#i.($S) ) if OWN!=4,  osample(osa1) generate(p1)
+teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
+graph export overlap_a1.pdf, as(pdf) replace
+tebalance summarize
+				
+
+*constructing pscores
+cap drop pscore
+logit FDI2016  i.($S)##c.($P) c.($P)##c.($P)
+predict pscore			
+twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
+legend(order(1 "control" 2 "treated")) xtitle("prop. score")			
+
+
+
+
+
+cap drop pscore
+logit FDI2016  i.OWN##i.TECH i.PORT i.TECH c.EXP2015 c.logemp2015  DEBTS2015	RD2015
+predict pscore			
+twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
+legend(order(1 "control" 2 "treated")) xtitle("prop. score")			
+
+
+cap drop pscore
+logit FDI2016  i.OWN i.TECH i.PORT i.TECH c.EXP2015 c.logemp2015##c.logemp2015  c.DEBTS2015##c.DEBTS2015	RD2015
+predict pscore			
+twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
+legend(order(1 "control" 2 "treated")) xtitle("prop. score")			
+
+
+
+
+*lets use AIPW* 
+cap drop osa1
+cap teffects aipw (logwages2017 c.($P) i.($S))(FDI2016 c.($P) i.($S)  ) , ///
+osample(osa1) 
+teffects aipw (logwages2017 c.($P) i.($S))(FDI2016 c.($P) i.($S)  ) if osa1==0
+teffects overlap
+tebalance summarize
+
+cap drop osa1
+teffects aipw (logwages2017  logemp2015 logwages2015  TFP2015 EXP2015 i.PORT i.OWN i.TECH) ///
+(FDI2016 logemp2015 logwages2015  TFP2015 EXP2015 i.PORT i.OWN i.TECH) if TECH!=4 , osample(osa1) 
+*teffects aipw (logwages2017  logemp2015 logwages2015  TFP2015 logexp2015 i.PORT i.OWN i.TECH)///
+*(FDI2016 logemp2015 logwages2015  TFP2015 logexp2015 i.PORT i.OWN i.TECH) if osa1==0
+teffects overlap 
+tebalance summarize
+
+
+
+
+								
