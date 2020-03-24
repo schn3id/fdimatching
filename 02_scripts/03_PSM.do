@@ -1,7 +1,7 @@
 /*******************************************************************************
 								PSM DO-FILE
 ********************************************************************************
-Applied Microeconometrics
+													   Applied Microeconometrics
 															   Empirical Project
 																	  Do-File 03
 		
@@ -15,93 +15,133 @@ Applied Microeconometrics
 					PART 1: Test for Overlap
 *******************************************************************************/
 
-//	Check OLS regression (Test)
-	reg logwages2017 FDI2016 logwages2015 i.OWN i.TECH PORT 
-
+//	Check OLS regression (Test with complete model)
+	reg logwages2017 FDI2016 i.OWN i.TECH PORT ///
+	logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015
 
 *------------------------------------------------------------------------------*
-*	PART 1.1: Propensity score and Kdensity plot
-*------------------------------------------------------------------------------*	
+*	PART 1.1: Propensity Score and Kdensity Plots
+*------------------------------------------------------------------------------*
 	
-//	Test overlap with all covariates
-	logit FDI2016 i.OWN i.TECH PORT logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015
+//	Test overlap with all covariates (logit)
+	logit FDI2016 i.OWN i.TECH PORT logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, r
+	// Pseudo R² of  0.5652
 	predict pscore
 	twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
 	legend(order(1 "control" 2 "treated")) xtitle("prop. score")	
-//	--> Terrible overlap
-	
-
-//	Test overlap dropping EXP2015 
+/*	--> Terrible overlap
+	Note: All variables except logwages2015 have a significant influence on 
+	treatment status			*/
+		
+//	Test overlap with all covariates (probit)
 	drop pscore
+	probit FDI2016 i.OWN i.TECH PORT logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015
+	// slight increase in Pseudo R² (= 0.5700)
+	predict pscore
+	twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
+	legend(order(1 "control" 2 "treated")) xtitle("prop. score")	
+/*	--> Similarly terrible overlap
+	Note: As in the logit model, logwages2015 is the only variable with an
+	insignifcant coefficient.			*/
+
 	
-	logit FDI2016 i.OWN i.TECH PORT logwages2015 TFP2015 logemp2015 DEBTS2015 RD2015
+/*	Attempt to improve overlap by including square terms (logit)
+	--> squaring dummies			*/
+	drop pscore
+	global D "OWN TECH PORT"
+	global C "logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015"
+	logit FDI2016 i.($D)##i.($D) $C 
+	// Pseudo R² = 0.5669
+	predict pscore
+	twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
+	legend(order(1 "control" 2 "treated")) xtitle("prop. score")	
+//	--> Somewhat better overlap but far from good	
+
+/*	Attempt to improve overlap by including square terms (probit)
+	--> squaring dummies			*/
+	drop pscore
+	global D "OWN TECH PORT"
+	global C "logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015"
+	probit FDI2016 i.($D)##i.($D) $C 
+	// Pseudo R² = 0.5718
+	predict pscore
+	twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
+	legend(order(1 "control" 2 "treated")) xtitle("prop. score")	
+
+/*	Attempt to improve overlap by including square terms (logit)
+	--> squaring continuous variables			*/
+	drop pscore
+	global D "OWN TECH PORT"
+	global C "logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015"
+	logit FDI2016 c.($C)##c.($C) $D
+	// Decrease in Pseudo R² (=0.5337)
+	predict pscore
+	twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
+	legend(order(1 "control" 2 "treated")) xtitle("prop. score")	
+
+/*	Attempt to improve overlap by including square terms (probit)
+	--> squaring continuous variables			*/
+	drop pscore
+	global D "OWN TECH PORT"
+	global C "logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015"
+	probit FDI2016 c.($C)##c.($C) $D
+	// Pseudo R² =0.5378
 	predict pscore
 	twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
 	legend(order(1 "control" 2 "treated")) xtitle("prop. score")
-//	--> Better but not great
-
 	
-//	Test overlap dropping EXP2015 and TECH
+/*	Attempt to improve overlap by including square terms (logit)
+	--> squaring dummies with continuous variables			*/
 	drop pscore
-	
-	logit FDI2016 i.OWN PORT logwages2015 TFP2015 logemp2015 DEBTS2015 RD2015
+	global D "OWN TECH PORT"
+	global C "logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015"
+	logit FDI2016 $D $C i.($D)#c.($C)
+	// Pseudo R² =  0.5814 --> highest so far
+	predict pscore
+	twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
+	legend(order(1 "control" 2 "treated")) xtitle("prop. score")	
+
+/*	Attempt to improve overlap by including square terms (probit)
+	--> squaring dummies with continuous variables			*/
+	drop pscore
+	global D "OWN TECH PORT"
+	global C "logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015"
+	probit FDI2016 $D $C i.($D)#c.($C)
+	// Pseudo R² = 0.5859 
 	predict pscore
 	twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
 	legend(order(1 "control" 2 "treated")) xtitle("prop. score")
-
-//	--> Best overlap with most complete model
-
-
-//	Test overlap dropping EXP2015, TECH, TFP2015, DEBTS2015 and RD2015
-	drop pscore
 	
-	logit FDI2016 i.OWN PORT logwages2015 logemp2015 
+/*	Attempt to improve overlap by including square terms (logit)
+	(squaring all variables)			*/
+	drop pscore
+	global D "OWN TECH PORT"
+	global C "logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015"
+	logit FDI2016 i.($D)##i.($D) c.($C)##c.($C) i.($D)#c.($C)
+	// Pseudo R² = 0.5942 
+	predict pscore
+	twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
+	legend(order(1 "control" 2 "treated")) xtitle("prop. score")	
+
+/*	Attempt to improve overlap by including square terms (probit)
+	(squaring all variables)			*/
+	drop pscore
+	global D "OWN TECH PORT"
+	global C "logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015"
+	probit FDI2016 i.($D)##i.($D) c.($C)##c.($C) i.($D)#c.($C)
+	// Pseudo R²  0.5986 --> highest so far
 	predict pscore
 	twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
 	legend(order(1 "control" 2 "treated")) xtitle("prop. score")
-//	--> Best Overlap overall (though not that different from the one before)	
-
-
-//	Test overlap dropping EXP2015, TECH, logwages2015, logemp2015, DEBTS2015 and RD2015
-	drop pscore
 	
-	logit FDI2016 i.OWN PORT  TFP2015  
-	predict pscore
-	twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
-	legend(order(1 "control" 2 "treated")) xtitle("prop. score")
-//	--> Fun result (bc of dropping logemp2015)
-
-
-
-*------------------------------------------------------------------------------*
-*	PART 1.2: Covariate Balancing Tests
-*------------------------------------------------------------------------------*
-
-// Frequency distribution of treated and control units across the strata
-
-// Divide into quintiles
-// Has to be after actual logit estimation determining pscore 
-xtile strata=pscore, n(5)
-save FDI_project_working, replace
-
-// Replicating table on slide 23 
-summarize pscore FDI2016 if strata==1
-summarize pscore FDI2016 if strata==1 & FDI2016==0
-summarize pscore FDI2016 if strata==1 & FDI2016==1
-summarize pscore FDI2016 if strata==2
-summarize pscore FDI2016 if strata==2 & FDI2016==0
-summarize pscore FDI2016 if strata==2 & FDI2016==1
-summarize pscore FDI2016 if strata==3
-summarize pscore FDI2016 if strata==3 & FDI2016==0
-summarize pscore FDI2016 if strata==3 & FDI2016==1
-summarize pscore FDI2016 if strata==4
-summarize pscore FDI2016 if strata==4 & FDI2016==0
-summarize pscore FDI2016 if strata==4 & FDI2016==1
-summarize pscore FDI2016 if strata==5
-summarize pscore FDI2016 if strata==5 & FDI2016==0
-summarize pscore FDI2016 if strata==5 & FDI2016==1
-
-
+/*	Note: 
+	1) probit models consistently yield higher R² than logit models for our data
+	--> Preference for probit models?
+	2) logwages2015 remains insignificant throughout all specifications. 
+	When including higher order terms, TFP2015, DEBTS2015 and RD2015 also become
+	insignificant. 
+	--> Exlude these in PSM for sure?			*/
+	
 ********************************************************************************
 *					PART 2: Matching
 ********************************************************************************
@@ -162,8 +202,4 @@ teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
 graph export overlap_a1.pdf, as(pdf) replace
 tebalance summarize				
 			
-			
-			
-			
-			
-			
+		
