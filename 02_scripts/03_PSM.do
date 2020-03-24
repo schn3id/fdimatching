@@ -22,10 +22,12 @@
 *------------------------------------------------------------------------------*
 *	PART 1.1: Propensity Score and Kdensity Plots
 *------------------------------------------------------------------------------*
+// NOT SURE WE NEED THIS	
 	
 //	Test overlap with all covariates (logit)
-	logit FDI2016 i.OWN i.TECH PORT logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, r
-	// Pseudo R² of  0.5652
+	logit 	FDI2016 i.OWN i.TECH PORT 		///
+			logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015
+			// Pseudo R² of  0.5652
 	predict pscore
 	twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
 	legend(order(1 "control" 2 "treated")) xtitle("prop. score")	
@@ -35,8 +37,9 @@
 		
 //	Test overlap with all covariates (probit)
 	drop pscore
-	probit FDI2016 i.OWN i.TECH PORT logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015
-	// slight increase in Pseudo R² (= 0.5700)
+	probit 	FDI2016 i.OWN i.TECH PORT ///
+			logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015
+			// slight increase in Pseudo R² (= 0.5700)
 	predict pscore
 	twoway kdensity pscore if FDI2016==0 || kdensity pscore if FDI2016==1, ///
 	legend(order(1 "control" 2 "treated")) xtitle("prop. score")	
@@ -135,71 +138,222 @@
 	legend(order(1 "control" 2 "treated")) xtitle("prop. score")
 	
 /*	Note: 
-	1) probit models consistently yield higher R² than logit models for our data
+	1) Non of the models yields satifying overlap. Check if there are varibales
+	which perfectly predict treatment status
+	2) probit models consistently yield higher R² than logit models for our data
 	--> Preference for probit models?
-	2) logwages2015 remains insignificant throughout all specifications. 
+	3) logwages2015 remains insignificant throughout all specifications. 
 	When including higher order terms, TFP2015, DEBTS2015 and RD2015 also become
-	insignificant. 
-	--> Exlude these in PSM for sure?			*/
+	insignificant. 						*/
+
+* --> Continue narrowing down the model based on descriptive analysis? 
+
 	
 ********************************************************************************
 *					PART 2: Matching
 ********************************************************************************
 
 *------------------------------------------------------------------------------*
-*	PART 2.1: Estimation using ... estimator
+*	PART 2.1: Estimation using psmatching with logit model
 *------------------------------------------------------------------------------*
 
-global S " i.OWN i.TECH PORT"
-global P " logemp2015 DEBTS2015 EXP2015 RD2015 logwages2015"
-
-
-*smol model
- cap drop osa1 // overlap balance
-cap drop p1 // to save pscore 
-*keep wages to controll for pre*
-teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015  TFP2015  i.PORT i.OWN),  osample(osa1) generate(p1)
-teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
-graph export overlap_a1.pdf, as(pdf) replace
-tebalance summarize
-
-*big model
-
-
- cap drop osa1 // overlap balance
-cap drop p1 // to save pscore 
-teffects psmatch (logwages2017) (FDI2016  i.TECH i.PORT logemp2015 DEBTS2015 EXP2015 RD2015 logwages2015),  osample(osa1) generate(p1)
-teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
-graph export overlap_a1.pdf, as(pdf) replace
-tebalance summarize
-
+*_________________________________________________________________Complete model
 	
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN i.TECH PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015),	///
+					  osample(osa1) generate(p1)
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_log_comp1.gph, replace)
+	graph export $results\overl_log_comp1.pdf, as(pdf) replace
+	// Catastrophic overlap
+	
+	tebalance summarize
+	// SD catastrophy. VR fine.
+	
+*____________________________________________Deleting problematic variable: TECH
+	
+	cap drop osa1 
+	cap drop p1 
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015),	///
+					  osample(osa1) generate(p1)
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_log_noTECH.gph, replace)
+	graph export $results\overl_log_noTECH.pdf, as(pdf) replace
+	// Much better overlap
+	
+	tebalance summarize
+	// SD way below 10% for all variables. VR fine.
+
+*_________________________________________Deleting problematic variable: EXP2015
+	cap drop osa1 
+	cap drop p1 
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN i.TECH PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 /*EXP2015*/ RD2015),	///
+					  osample(osa1) generate(p1)
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_log_noEXP.gph, replace)
+	graph export $results\overl_log_noEXP.pdf, as(pdf) replace
+	// Ok overlap except left-hand tail.
+	
+	tebalance summarize
+	// SD still above 20% for TECH. VR fine.
+
+*_______________________________Deleting problematic variables: TECH and EXP2015
+	
+	cap drop osa1 
+	cap drop p1 
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 /*EXP2015*/ RD2015),	///
+					  osample(osa1) generate(p1)
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_log_noTECHEXP.gph, replace)
+	graph export $results\overl_log_noTECHEXP.pdf, as(pdf) replace
+	// Ok overlap except left-hand tail.
+	
+	tebalance summarize
+	// SD and VR fine.
+	
+*____________________________Deleting problematic variables: TECH and logemp2015
+	
+	cap drop osa1 
+	cap drop p1 
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 /*logemp2015*/ DEBTS2015 EXP2015 RD2015),	///
+					  osample(osa1) generate(p1)
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_log_noTECHemp.gph, replace)
+	graph export $results\overl_log_noTECHemp.pdf, as(pdf) replace
+	// Ok overlap, but tails still not so good.
+	
+	tebalance summarize
+	// SD way below 10% for all variables. VR fine.
+	
+*___________________Deleting problematic variables: TECH, EXP2015 and logemp2015
+	
+	cap drop osa1 
+	cap drop p1 
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 /*logemp2015*/ DEBTS2015 /*EXP2015*/ RD2015),	///
+					  osample(osa1) generate(p1)
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_log_noTECHEXPemp.gph, replace)
+	graph export $results\overl_log_noTECHEXPemp.pdf, as(pdf) replace
+	// Very good overlap.
+	
+	tebalance summarize
+	// SD very good, VR also fine.	
+
 *------------------------------------------------------------------------------*
-*	PART 2.2: Estimation using psmatching with probit estimator
+*	PART 2.2: Estimation using psmatching with probit model
 *------------------------------------------------------------------------------*
 
-cap drop osa1 // overlap balance
-cap drop p1 // to save pscore 
-teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015  TFP2015 EXP2015 i.PORT i.OWN, probit), osample(osa1) generate(p1)
-teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
-graph export overlap_a1.pdf, as(pdf) replace
-tebalance summarize	
-			
-cap drop osa1 // overlap balance
-cap drop p1 // to save pscore 
-teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015  TFP2015 c.EXP2015##c.EXP2015 i.PORT i.OWN, probit), osample(osa2) generate(p2)
-teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
-graph export overlap_a1.pdf, as(pdf) replace
-tebalance summarize			
-			
-generate logexp2015 = log(EXP2015)
+*_________________________________________________________________Complete model
+	
+	cap drop osa1 
+	cap drop p1 	
+	cap teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN i.TECH PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit),	///
+					  osample(osa1) generate(p1)
+				   // violation of overlap assumption for 389 obs 	
 
-cap drop osa1 // overlap balance
-cap drop p1 // to save pscore 
-cap teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015  TFP2015 logexp2015 i.PORT i.OWN, probit), osample(osa3) generate(p3)
-teffects psmatch (logwages2017) (FDI2016 logemp2015 logwages2015  TFP2015 logexp2015 i.PORT i.OWN, probit) if osa3==0, generate (p3) 
-teffects overlap, ptlevel(1)  saving(overlap_a1.gph, replace)
-graph export overlap_a1.pdf, as(pdf) replace
-tebalance summarize				
-			
-		
+	// Reestimate			   
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN i.TECH PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit)	///
+					  if osa1 == 0
+					  
+	tebalance summarize
+	// SD catastrophy. VR fine.
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_prob_comp1.gph, replace)
+	graph export $results\overl_prob_comp1.pdf, as(pdf) replace
+	// Catastrophic overlap
+	
+	
+*____________________________________________Deleting problematic variable: TECH
+	
+	cap drop osa1 
+	cap drop p1 
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit),	///
+					  osample(osa1) generate(p1)
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_prob_noTECH.gph, replace)
+	graph export $results\overl_prob_noTECH.pdf, as(pdf) replace
+	// Much better overlap
+	
+	tebalance summarize
+	// SD way below 10% for all variables. VR fine.
+
+*_________________________________________Deleting problematic variable: EXP2015
+
+	cap drop osa1 
+	cap drop p1 
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN i.TECH PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 /*EXP2015*/ RD2015, probit),	///
+					  osample(osa1) generate(p1)
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_prob_noEXP.gph, replace)
+	graph export $results\overl_prob_noEXP.pdf, as(pdf) replace
+	// Ok overlap except left-hand tail.
+	
+	tebalance summarize
+	// SD not great, some above 10% but none above 20%. VR fine.
+
+*_______________________________Deleting problematic variables: TECH and EXP2015
+	
+	cap drop osa1 
+	cap drop p1 
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 /*EXP2015*/ RD2015, probit),	///
+					  osample(osa1) generate(p1)
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_prob_noTECHEXP.gph, replace)
+	graph export $results\overl_prob_noTECHEXP.pdf, as(pdf) replace
+	// Ok overlap except left-hand tail.
+	
+	tebalance summarize
+	// SD and VR fine.
+	
+*____________________________Deleting problematic variables: TECH and logemp2015
+	
+	cap drop osa1 
+	cap drop p1 
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 /*logemp2015*/ DEBTS2015 EXP2015 RD2015, probit),	///
+					  osample(osa1) generate(p1)
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_prob_noTECHemp.gph, replace)
+	graph export $results\overl_prob_noTECHemp.pdf, as(pdf) replace
+	// Ok overlap, but tails still not so good.
+	
+	tebalance summarize
+	// SD way below 10% for all variables. VR fine.
+	
+*___________________Deleting problematic variables: TECH, EXP2015 and logemp2015
+	
+	cap drop osa1 
+	cap drop p1 
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 /*logemp2015*/ DEBTS2015 /*EXP2015*/ RD2015, probit),	///
+					  osample(osa1) generate(p1)
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_prob_noTECHEXPemp.gph, replace)
+	graph export $results\overl_prob_noTECHEXPemp.pdf, as(pdf) replace
+	// Very good overlap, left-hand tail still not perfect but acceptable.
+	
+	tebalance summarize
+	// SD very good, VR also fine.			
