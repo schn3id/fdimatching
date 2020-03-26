@@ -1,0 +1,1057 @@
+{smcl}
+{txt}{sf}{ul off}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}C:\Users\schne\Documents\GitHub\fdimatching\02_scripts\wages\02_Descriptive_Analysis_wages.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}26 Mar 2020, 16:24:36
+{txt}
+{com}. 
+. use C:\Users\schne\Documents\GitHub\fdimatching\01_input\FDI_project.dta, clear
+{txt}
+{com}. 
+. 
+. global S " OWN PORT"
+{txt}
+{com}. global P "logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015"
+{txt}
+{com}. 
+. cap gen emp2015 = exp(logemp2015)
+{txt}
+{com}. cap gen wages2015 = exp(logwages2015)   
+{txt}
+{com}. 
+. 
+. 
+. *keep wages to controll for pre*
+. teffects psmatch (logwages2017) (FDI2016 i.($S) $P),  osample(osa1) generate(p1)
+{res}
+{txt}Treatment-effects estimation{col 48}Number of obs {col 67}= {res}    11,323
+{txt:Estimator}{col 16}:{res: propensity-score matching}{col 48}{txt:Matches: requested }{col 67}{txt:=}          1
+{txt:Outcome model}{col 16}:{res: matching}{txt}{col 63}min {col 67}= {res}         1
+{txt:Treatment model}{col 16}:{res: logit}{col 63}{txt:max }{col 67}{txt:=}          1
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}   AI Robust
+{col 1}logwages2017{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      z{col 46}   P>|z|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}ATE          {txt}{c |}
+{space 5}FDI2016 {c |}
+{space 3}(1 vs 0)  {c |}{col 14}{res}{space 2}  .139015{col 26}{space 2} .0666616{col 37}{space 1}    2.09{col 46}{space 3}0.037{col 54}{space 4} .0083607{col 67}{space 3} .2696693
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. teffects overlap, ptlevel(1)  saving(overlap_normal.gph, replace)
+{res}{txt}(note: file overlap_normal.gph not found)
+{res}{txt}(file overlap_normal.gph saved)
+
+{com}. graph export overlap_a1.pdf, as(pdf) replace
+{txt}(file overlap_a1.pdf written in PDF format)
+
+{com}. tebalance summarize
+{res}
+{txt}{p 2 0 2}Covariate balance summary{p_end}
+{res}{col 42}{text}          Raw{col 55}      Matched
+{res}{col 27}{text}{hline 15}{hline 13}{hline 13}
+{col 27}{text}Number of obs ={col 42}{result}{space 3}    11,323{col 55}{space 3}    22,646
+{col 27}{text}Treated obs   ={col 42}{result}{space 3}     4,460{col 55}{space 3}    11,323
+{col 27}{text}Control obs   ={col 42}{result}{space 3}     6,863{col 55}{space 3}    11,323
+{col 27}{text}{hline 15}{hline 13}{hline 13}
+
+{res}{col 3}{text}{hline 16}{c TT}{hline 24}{hline 24}
+{col 19}{text}{c |}Standardized differences{col 44}          Variance ratio
+{res}{col 19}{text}{c |}        Raw{col 32}    Matched{col 44}          Raw{col 56}    Matched
+{res}{col 3}{text}{hline 16}{c +}{hline 12}{hline 12}{hline 12}{hline 12}
+{col 3}{text}            OWN{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} -.018354{col 32}{space 2}-.0160171{col 44}{space 4} .9769702{col 56}{space 2} .9793621
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0616272{col 32}{space 2} .0503382{col 44}{space 4}  1.02321{col 56}{space 2} 1.017008
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .1016402{col 32}{space 2}-.0164647{col 44}{space 4} 1.100951{col 56}{space 2} .9842807
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .4092869{col 32}{space 2}-.0810373{col 44}{space 4} 1.253595{col 56}{space 2} .9498604
+{col 19}{text}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}{result}{space 2}-.1300321{col 32}{space 2} .0374587{col 44}{space 4} .9769191{col 56}{space 2} 1.042444
+{col 3}{text}        TFP2015{col 19}{c |}{result}{space 2} -.178877{col 32}{space 2}-.0064165{col 44}{space 4} .9473458{col 56}{space 2}  .948644
+{col 3}{text}     logemp2015{col 19}{c |}{result}{space 2} .5654306{col 32}{space 2}-.0320107{col 44}{space 4}  .803081{col 56}{space 2} .7767628
+{col 3}{text}      DEBTS2015{col 19}{c |}{result}{space 2}-.0529435{col 32}{space 2}  .001263{col 44}{space 4} 1.051101{col 56}{space 2} 1.025652
+{col 3}{text}        EXP2015{col 19}{c |}{result}{space 2} 1.014184{col 32}{space 2}-.0033961{col 44}{space 4} 1.228659{col 56}{space 2} 1.065878
+{col 3}{text}         RD2015{col 19}{c |}{result}{space 2} .0356507{col 32}{space 2} .0384723{col 44}{space 4} 1.085768{col 56}{space 2} 1.092489
+{col 3}{text}{hline 16}{c BT}{hline 12}{hline 12}{hline 12}{hline 12}
+{res}{txt}
+{com}. cap drop p11
+{txt}
+{com}. cap drop osa1 // overlap balance
+{txt}
+{com}. 
+. *interaction without tech 
+. *keep wages to controll for pre*
+. teffects psmatch (logwages2017) (FDI2016 i.($S)##c.($P)),  osample(osa1) generate(p1)
+{res}
+{txt}Treatment-effects estimation{col 48}Number of obs {col 67}= {res}    11,323
+{txt:Estimator}{col 16}:{res: propensity-score matching}{col 48}{txt:Matches: requested }{col 67}{txt:=}          1
+{txt:Outcome model}{col 16}:{res: matching}{txt}{col 63}min {col 67}= {res}         1
+{txt:Treatment model}{col 16}:{res: logit}{col 63}{txt:max }{col 67}{txt:=}          1
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}   AI Robust
+{col 1}logwages2017{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      z{col 46}   P>|z|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}ATE          {txt}{c |}
+{space 5}FDI2016 {c |}
+{space 3}(1 vs 0)  {c |}{col 14}{res}{space 2} .2641757{col 26}{space 2} .1248193{col 37}{space 1}    2.12{col 46}{space 3}0.034{col 54}{space 4} .0195344{col 67}{space 3}  .508817
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. teffects overlap, ptlevel(1)  saving(overlap_norm_inter.gph, replace)
+{res}{txt}(note: file overlap_norm_inter.gph not found)
+{res}{txt}(file overlap_norm_inter.gph saved)
+
+{com}. graph export overlap_a1.pdf, as(pdf) replace
+{txt}(file overlap_a1.pdf written in PDF format)
+
+{com}. tebalance summarize
+{res}
+{txt}{p 2 0 2}Covariate balance summary{p_end}
+{res}{col 42}{text}          Raw{col 55}      Matched
+{res}{col 27}{text}{hline 15}{hline 13}{hline 13}
+{col 27}{text}Number of obs ={col 42}{result}{space 3}    11,323{col 55}{space 3}    22,646
+{col 27}{text}Treated obs   ={col 42}{result}{space 3}     4,460{col 55}{space 3}    11,323
+{col 27}{text}Control obs   ={col 42}{result}{space 3}     6,863{col 55}{space 3}    11,323
+{col 27}{text}{hline 15}{hline 13}{hline 13}
+
+{res}{col 3}{text}{hline 16}{c TT}{hline 24}{hline 24}
+{col 19}{text}{c |}Standardized differences{col 44}          Variance ratio
+{res}{col 19}{text}{c |}        Raw{col 32}    Matched{col 44}          Raw{col 56}    Matched
+{res}{col 3}{text}{hline 16}{c +}{hline 12}{hline 12}{hline 12}{hline 12}
+{col 3}{text}            OWN{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} -.018354{col 32}{space 2}-.0600436{col 44}{space 4} .9769702{col 56}{space 2} .9266372
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0616272{col 32}{space 2} .0605825{col 44}{space 4}  1.02321{col 56}{space 2} 1.020815
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .1016402{col 32}{space 2} .0102501{col 44}{space 4} 1.100951{col 56}{space 2}  1.01021
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .4092869{col 32}{space 2}-.0822052{col 44}{space 4} 1.253595{col 56}{space 2} .9488041
+{col 19}{text}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}{result}{space 2}-.1300321{col 32}{space 2} .0466867{col 44}{space 4} .9769191{col 56}{space 2} 1.085377
+{col 3}{text}        TFP2015{col 19}{c |}{result}{space 2} -.178877{col 32}{space 2} .0200063{col 44}{space 4} .9473458{col 56}{space 2} .8813347
+{col 3}{text}     logemp2015{col 19}{c |}{result}{space 2} .5654306{col 32}{space 2} .0061717{col 44}{space 4}  .803081{col 56}{space 2} .8106503
+{col 3}{text}      DEBTS2015{col 19}{c |}{result}{space 2}-.0529435{col 32}{space 2} .0224983{col 44}{space 4} 1.051101{col 56}{space 2} .9659098
+{col 3}{text}        EXP2015{col 19}{c |}{result}{space 2} 1.014184{col 32}{space 2}-.0130632{col 44}{space 4} 1.228659{col 56}{space 2} .9915585
+{col 3}{text}         RD2015{col 19}{c |}{result}{space 2} .0356507{col 32}{space 2} .0397017{col 44}{space 4} 1.085768{col 56}{space 2} 1.095073
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0501523{col 32}{space 2}-.0481805{col 44}{space 4} .8787442{col 56}{space 2} .9519407
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0095374{col 32}{space 2} .0801736{col 44}{space 4} .9615021{col 56}{space 2} 1.155428
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0578536{col 32}{space 2} .0295522{col 44}{space 4} 1.020548{col 56}{space 2} 1.072948
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}        TFP2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} -.064156{col 32}{space 2}-.0086463{col 44}{space 4} .8276227{col 56}{space 2} .9773773
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}-.0408866{col 32}{space 2} .0269716{col 44}{space 4} .8831729{col 56}{space 2} .9591831
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0558077{col 32}{space 2} .0243805{col 44}{space 4} 1.040186{col 56}{space 2} 1.009787
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}     logemp2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .1399032{col 32}{space 2}  -.04603{col 44}{space 4} 1.482211{col 56}{space 2} .8342816
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .2656301{col 32}{space 2} .0233875{col 44}{space 4} 1.407778{col 56}{space 2} .9921013
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .2398483{col 32}{space 2} .0182337{col 44}{space 4} 1.529572{col 56}{space 2} .8898871
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}      DEBTS2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0444712{col 32}{space 2}-.0241853{col 44}{space 4} .8861299{col 56}{space 2} .9659733
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}-.0148901{col 32}{space 2} .0688602{col 44}{space 4} .9654587{col 56}{space 2}  1.05853
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0840856{col 32}{space 2} .0173293{col 44}{space 4} 1.078225{col 56}{space 2} 1.030334
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}        EXP2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .2093034{col 32}{space 2}-.0700708{col 44}{space 4} 2.149546{col 56}{space 2} .8102253
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .4018465{col 32}{space 2} .0267004{col 44}{space 4} 2.430233{col 56}{space 2} 1.040291
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .3629183{col 32}{space 2} .0369351{col 44}{space 4} 2.656176{col 56}{space 2} 1.090529
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}         RD2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .0128389{col 32}{space 2} .0215812{col 44}{space 4} 1.076567{col 56}{space 2} 1.132863
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0357659{col 32}{space 2} .0504087{col 44}{space 4} 1.160652{col 56}{space 2} 1.228281
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0405324{col 32}{space 2}-.0118815{col 44}{space 4} 1.224257{col 56}{space 2} .9423468
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .3128492{col 32}{space 2}-.0605792{col 44}{space 4} 1.297182{col 56}{space 2} .9462248
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}        TFP2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .2839844{col 32}{space 2}-.0433198{col 44}{space 4} 1.301284{col 56}{space 2}  .950305
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}     logemp2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .4111044{col 32}{space 2}-.0507221{col 44}{space 4} 1.577594{col 56}{space 2} .8653302
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}      DEBTS2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .3018769{col 32}{space 2}-.0366832{col 44}{space 4} 1.431117{col 56}{space 2} .9338188
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}        EXP2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .6537362{col 32}{space 2} -.045543{col 44}{space 4} 2.641614{col 56}{space 2}  .911115
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}         RD2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .1184519{col 32}{space 2} .0037129{col 44}{space 4} 1.722872{col 56}{space 2}  1.01821
+{col 3}{text}{hline 16}{c BT}{hline 12}{hline 12}{hline 12}{hline 12}
+{res}{txt}
+{com}. cap drop osa1 // overlap balance
+{txt}
+{com}. cap drop p11
+{txt}
+{com}. 
+. *3 neighbours
+. teffects psmatch (logwages2017) (FDI2016 i.($S) $P), nneighbor(3) osample(osa1) generate(p1) 
+{res}
+{txt}Treatment-effects estimation{col 48}Number of obs {col 67}= {res}    11,323
+{txt:Estimator}{col 16}:{res: propensity-score matching}{col 48}{txt:Matches: requested }{col 67}{txt:=}          3
+{txt:Outcome model}{col 16}:{res: matching}{txt}{col 63}min {col 67}= {res}         3
+{txt:Treatment model}{col 16}:{res: logit}{col 63}{txt:max }{col 67}{txt:=}          3
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}   AI Robust
+{col 1}logwages2017{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      z{col 46}   P>|z|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}ATE          {txt}{c |}
+{space 5}FDI2016 {c |}
+{space 3}(1 vs 0)  {c |}{col 14}{res}{space 2} .1849837{col 26}{space 2} .0509928{col 37}{space 1}    3.63{col 46}{space 3}0.000{col 54}{space 4} .0850397{col 67}{space 3} .2849277
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. teffects overlap, ptlevel(1)  saving(overlap_nn3_norm.gph, replace)
+{res}{txt}(note: file overlap_nn3_norm.gph not found)
+{res}{txt}(file overlap_nn3_norm.gph saved)
+
+{com}. graph export overlap_a1.pdf, as(pdf) replace
+{txt}(file overlap_a1.pdf written in PDF format)
+
+{com}. tebalance summarize
+{res}
+{txt}{p 2 0 2}Covariate balance summary{p_end}
+{res}{col 42}{text}          Raw{col 55}      Matched
+{res}{col 27}{text}{hline 15}{hline 13}{hline 13}
+{col 27}{text}Number of obs ={col 42}{result}{space 3}    11,323{col 55}{space 3}    22,646
+{col 27}{text}Treated obs   ={col 42}{result}{space 3}     4,460{col 55}{space 3}    11,323
+{col 27}{text}Control obs   ={col 42}{result}{space 3}     6,863{col 55}{space 3}    11,323
+{col 27}{text}{hline 15}{hline 13}{hline 13}
+
+{res}{col 3}{text}{hline 16}{c TT}{hline 24}{hline 24}
+{col 19}{text}{c |}Standardized differences{col 44}          Variance ratio
+{res}{col 19}{text}{c |}        Raw{col 32}    Matched{col 44}          Raw{col 56}    Matched
+{res}{col 3}{text}{hline 16}{c +}{hline 12}{hline 12}{hline 12}{hline 12}
+{col 3}{text}            OWN{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} -.018354{col 32}{space 2}-.0211949{col 44}{space 4} .9769702{col 56}{space 2} .9728713
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0616272{col 32}{space 2} .0399747{col 44}{space 4}  1.02321{col 56}{space 2} 1.013865
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .1016402{col 32}{space 2}-.0111143{col 44}{space 4} 1.100951{col 56}{space 2} .9893247
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .4092869{col 32}{space 2}-.0785604{col 44}{space 4} 1.253595{col 56}{space 2} .9526009
+{col 19}{text}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}{result}{space 2}-.1300321{col 32}{space 2} .0232984{col 44}{space 4} .9769191{col 56}{space 2} 1.055615
+{col 3}{text}        TFP2015{col 19}{c |}{result}{space 2} -.178877{col 32}{space 2}-.0193856{col 44}{space 4} .9473458{col 56}{space 2} .9204694
+{col 3}{text}     logemp2015{col 19}{c |}{result}{space 2} .5654306{col 32}{space 2}-.0170071{col 44}{space 4}  .803081{col 56}{space 2} .7757176
+{col 3}{text}      DEBTS2015{col 19}{c |}{result}{space 2}-.0529435{col 32}{space 2}-.0249472{col 44}{space 4} 1.051101{col 56}{space 2} 1.028451
+{col 3}{text}        EXP2015{col 19}{c |}{result}{space 2} 1.014184{col 32}{space 2} -.001096{col 44}{space 4} 1.228659{col 56}{space 2} 1.041757
+{col 3}{text}         RD2015{col 19}{c |}{result}{space 2} .0356507{col 32}{space 2} .0474298{col 44}{space 4} 1.085768{col 56}{space 2} 1.112002
+{col 3}{text}{hline 16}{c BT}{hline 12}{hline 12}{hline 12}{hline 12}
+{res}{txt}
+{com}. cap drop osa1 // overlap balance
+{txt}
+{com}. cap drop p11-p13 // to save pscore 
+{txt}
+{com}. 
+. teffects psmatch (logwages2017) (FDI2016 i.($S)##c.($P)), nneighbor(3) osample(osa1) generate(p1) 
+{res}
+{txt}Treatment-effects estimation{col 48}Number of obs {col 67}= {res}    11,323
+{txt:Estimator}{col 16}:{res: propensity-score matching}{col 48}{txt:Matches: requested }{col 67}{txt:=}          3
+{txt:Outcome model}{col 16}:{res: matching}{txt}{col 63}min {col 67}= {res}         3
+{txt:Treatment model}{col 16}:{res: logit}{col 63}{txt:max }{col 67}{txt:=}          3
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}   AI Robust
+{col 1}logwages2017{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      z{col 46}   P>|z|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}ATE          {txt}{c |}
+{space 5}FDI2016 {c |}
+{space 3}(1 vs 0)  {c |}{col 14}{res}{space 2} .2842739{col 26}{space 2} .0838899{col 37}{space 1}    3.39{col 46}{space 3}0.001{col 54}{space 4} .1198527{col 67}{space 3}  .448695
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. teffects overlap, ptlevel(1)  saving(overlap_nn3_int.gph, replace)
+{res}{txt}(note: file overlap_nn3_int.gph not found)
+{res}{txt}(file overlap_nn3_int.gph saved)
+
+{com}. graph export overlap_a1.pdf, as(pdf) replace
+{txt}(file overlap_a1.pdf written in PDF format)
+
+{com}. tebalance summarize
+{res}
+{txt}{p 2 0 2}Covariate balance summary{p_end}
+{res}{col 42}{text}          Raw{col 55}      Matched
+{res}{col 27}{text}{hline 15}{hline 13}{hline 13}
+{col 27}{text}Number of obs ={col 42}{result}{space 3}    11,323{col 55}{space 3}    22,646
+{col 27}{text}Treated obs   ={col 42}{result}{space 3}     4,460{col 55}{space 3}    11,323
+{col 27}{text}Control obs   ={col 42}{result}{space 3}     6,863{col 55}{space 3}    11,323
+{col 27}{text}{hline 15}{hline 13}{hline 13}
+
+{res}{col 3}{text}{hline 16}{c TT}{hline 24}{hline 24}
+{col 19}{text}{c |}Standardized differences{col 44}          Variance ratio
+{res}{col 19}{text}{c |}        Raw{col 32}    Matched{col 44}          Raw{col 56}    Matched
+{res}{col 3}{text}{hline 16}{c +}{hline 12}{hline 12}{hline 12}{hline 12}
+{col 3}{text}            OWN{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} -.018354{col 32}{space 2}-.0492315{col 44}{space 4} .9769702{col 56}{space 2}  .939148
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0616272{col 32}{space 2} .0472448{col 44}{space 4}  1.02321{col 56}{space 2} 1.017541
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .1016402{col 32}{space 2}-.0089255{col 44}{space 4} 1.100951{col 56}{space 2} .9912458
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .4092869{col 32}{space 2}-.0753028{col 44}{space 4} 1.253595{col 56}{space 2} .9507784
+{col 19}{text}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}{result}{space 2}-.1300321{col 32}{space 2} .0329803{col 44}{space 4} .9769191{col 56}{space 2} .9995978
+{col 3}{text}        TFP2015{col 19}{c |}{result}{space 2} -.178877{col 32}{space 2}-.0102145{col 44}{space 4} .9473458{col 56}{space 2} .8753437
+{col 3}{text}     logemp2015{col 19}{c |}{result}{space 2} .5654306{col 32}{space 2} .0147772{col 44}{space 4}  .803081{col 56}{space 2} .7792484
+{col 3}{text}      DEBTS2015{col 19}{c |}{result}{space 2}-.0529435{col 32}{space 2}-.0110616{col 44}{space 4} 1.051101{col 56}{space 2} .9856435
+{col 3}{text}        EXP2015{col 19}{c |}{result}{space 2} 1.014184{col 32}{space 2} .0103133{col 44}{space 4} 1.228659{col 56}{space 2} .9752504
+{col 3}{text}         RD2015{col 19}{c |}{result}{space 2} .0356507{col 32}{space 2}  .036228{col 44}{space 4} 1.085768{col 56}{space 2} 1.085673
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0501523{col 32}{space 2}-.0460918{col 44}{space 4} .8787442{col 56}{space 2} .9541794
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0095374{col 32}{space 2} .0569617{col 44}{space 4} .9615021{col 56}{space 2} 1.094139
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0578536{col 32}{space 2} .0111892{col 44}{space 4} 1.020548{col 56}{space 2} 1.004714
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}        TFP2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} -.064156{col 32}{space 2}-.0186051{col 44}{space 4} .8276227{col 56}{space 2} .9230424
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}-.0408866{col 32}{space 2} .0233305{col 44}{space 4} .8831729{col 56}{space 2} .9767962
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0558077{col 32}{space 2}-.0199314{col 44}{space 4} 1.040186{col 56}{space 2} .8938706
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}     logemp2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .1399032{col 32}{space 2}-.0452984{col 44}{space 4} 1.482211{col 56}{space 2} .8225701
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .2656301{col 32}{space 2} .0335859{col 44}{space 4} 1.407778{col 56}{space 2}  .966616
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .2398483{col 32}{space 2} .0170976{col 44}{space 4} 1.529572{col 56}{space 2} .9133864
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}      DEBTS2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0444712{col 32}{space 2}-.0293187{col 44}{space 4} .8861299{col 56}{space 2} .9371789
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}-.0148901{col 32}{space 2} .0419452{col 44}{space 4} .9654587{col 56}{space 2} 1.052225
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0840856{col 32}{space 2}  .000971{col 44}{space 4} 1.078225{col 56}{space 2} 1.012584
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}        EXP2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .2093034{col 32}{space 2}-.0423639{col 44}{space 4} 2.149546{col 56}{space 2} .9028813
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .4018465{col 32}{space 2} .0294636{col 44}{space 4} 2.430233{col 56}{space 2} 1.038601
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .3629183{col 32}{space 2} .0094613{col 44}{space 4} 2.656176{col 56}{space 2} 1.018402
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}         RD2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .0128389{col 32}{space 2} .0018261{col 44}{space 4} 1.076567{col 56}{space 2} 1.010781
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0357659{col 32}{space 2}   .02011{col 44}{space 4} 1.160652{col 56}{space 2} 1.088077
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0405324{col 32}{space 2} .0072862{col 44}{space 4} 1.224257{col 56}{space 2}  1.03614
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .3128492{col 32}{space 2}-.0512554{col 44}{space 4} 1.297182{col 56}{space 2} .9330127
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}        TFP2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .2839844{col 32}{space 2}-.0660082{col 44}{space 4} 1.301284{col 56}{space 2}  .896583
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}     logemp2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .4111044{col 32}{space 2}-.0261797{col 44}{space 4} 1.577594{col 56}{space 2} .9131482
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}      DEBTS2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .3018769{col 32}{space 2}-.0528971{col 44}{space 4} 1.431117{col 56}{space 2} .9100635
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}        EXP2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .6537362{col 32}{space 2}-.0312129{col 44}{space 4} 2.641614{col 56}{space 2} .9364379
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}         RD2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .1184519{col 32}{space 2}-.0162292{col 44}{space 4} 1.722872{col 56}{space 2} .9241942
+{col 3}{text}{hline 16}{c BT}{hline 12}{hline 12}{hline 12}{hline 12}
+{res}{txt}
+{com}. cap drop osa1 // overlap balance
+{txt}
+{com}. cap drop p11-p13 // to save pscore 
+{txt}
+{com}. 
+. 
+. 
+. *use  calipher 
+. 
+.  // to save pscore 
+. cap teffects psmatch (logwages2017) (FDI2016 i.($S) $P), osample(osa1) generate(p1) nneighbor(5) caliper(0.05)
+{txt}
+{com}. drop if osa1==1 /*drop 6 observations*/
+{txt}(6 observations deleted)
+
+{com}. drop osa1
+{txt}
+{com}. teffects psmatch (logwages2017) (FDI2016 i.($S) $P), osample(osa1) generate(p1) nneighbor(5) caliper(0.05)
+{res}
+{txt}Treatment-effects estimation{col 48}Number of obs {col 67}= {res}    11,317
+{txt:Estimator}{col 16}:{res: propensity-score matching}{col 48}{txt:Matches: requested }{col 67}{txt:=}          5
+{txt:Outcome model}{col 16}:{res: matching}{txt}{col 63}min {col 67}= {res}         5
+{txt:Treatment model}{col 16}:{res: logit}{col 63}{txt:max }{col 67}{txt:=}          5
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}   AI Robust
+{col 1}logwages2017{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      z{col 46}   P>|z|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}ATE          {txt}{c |}
+{space 5}FDI2016 {c |}
+{space 3}(1 vs 0)  {c |}{col 14}{res}{space 2} .1868739{col 26}{space 2} .0541598{col 37}{space 1}    3.45{col 46}{space 3}0.001{col 54}{space 4} .0807226{col 67}{space 3} .2930253
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. graph export overlap_cal_norm.pdf, as(pdf) replace
+{txt}(file overlap_cal_norm.pdf written in PDF format)
+
+{com}. tebalance summarize
+{res}
+{txt}{p 2 0 2}Covariate balance summary{p_end}
+{res}{col 42}{text}          Raw{col 55}      Matched
+{res}{col 27}{text}{hline 15}{hline 13}{hline 13}
+{col 27}{text}Number of obs ={col 42}{result}{space 3}    11,317{col 55}{space 3}    22,634
+{col 27}{text}Treated obs   ={col 42}{result}{space 3}     4,454{col 55}{space 3}    11,317
+{col 27}{text}Control obs   ={col 42}{result}{space 3}     6,863{col 55}{space 3}    11,317
+{col 27}{text}{hline 15}{hline 13}{hline 13}
+
+{res}{col 3}{text}{hline 16}{c TT}{hline 24}{hline 24}
+{col 19}{text}{c |}Standardized differences{col 44}          Variance ratio
+{res}{col 19}{text}{c |}        Raw{col 32}    Matched{col 44}          Raw{col 56}    Matched
+{res}{col 3}{text}{hline 16}{c +}{hline 12}{hline 12}{hline 12}{hline 12}
+{col 3}{text}            OWN{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0181583{col 32}{space 2}-.0119189{col 44}{space 4} .9772189{col 56}{space 2} .9846701
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0609651{col 32}{space 2} .0228361{col 44}{space 4} 1.023002{col 56}{space 2} 1.007769
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .1020575{col 32}{space 2} .0012976{col 44}{space 4} 1.101329{col 56}{space 2} 1.001266
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .4077905{col 32}{space 2}-.0716221{col 44}{space 4} 1.253353{col 56}{space 2} .9569458
+{col 19}{text}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}{result}{space 2}-.1303944{col 32}{space 2} .0126259{col 44}{space 4} .9772289{col 56}{space 2} 1.037005
+{col 3}{text}        TFP2015{col 19}{c |}{result}{space 2}-.1777876{col 32}{space 2}-.0140754{col 44}{space 4} .9458382{col 56}{space 2} .9194304
+{col 3}{text}     logemp2015{col 19}{c |}{result}{space 2} .5640854{col 32}{space 2}-.0158692{col 44}{space 4} .8024711{col 56}{space 2}  .777711
+{col 3}{text}      DEBTS2015{col 19}{c |}{result}{space 2}-.0528173{col 32}{space 2}-.0176368{col 44}{space 4} 1.052203{col 56}{space 2} 1.031734
+{col 3}{text}        EXP2015{col 19}{c |}{result}{space 2} 1.012743{col 32}{space 2} .0041907{col 44}{space 4} 1.218442{col 56}{space 2} 1.034108
+{col 3}{text}         RD2015{col 19}{c |}{result}{space 2}  .036167{col 32}{space 2} .0436834{col 44}{space 4} 1.087016{col 56}{space 2} 1.102673
+{col 3}{text}{hline 16}{c BT}{hline 12}{hline 12}{hline 12}{hline 12}
+{res}{txt}
+{com}. cap drop osa1 // overlap balance
+{txt}
+{com}. cap drop p11-p15 // to save pscore 
+{txt}
+{com}. 
+. 
+. 
+.  // to save pscore 
+. teffects psmatch (logwages2017) (FDI2016 i.($S)##c.($P)), osample(osa1) generate(p1) nneighbor(5) caliper(0.05)
+{res}
+{txt}Treatment-effects estimation{col 48}Number of obs {col 67}= {res}    11,317
+{txt:Estimator}{col 16}:{res: propensity-score matching}{col 48}{txt:Matches: requested }{col 67}{txt:=}          5
+{txt:Outcome model}{col 16}:{res: matching}{txt}{col 63}min {col 67}= {res}         5
+{txt:Treatment model}{col 16}:{res: logit}{col 63}{txt:max }{col 67}{txt:=}          5
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}   AI Robust
+{col 1}logwages2017{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      z{col 46}   P>|z|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}ATE          {txt}{c |}
+{space 5}FDI2016 {c |}
+{space 3}(1 vs 0)  {c |}{col 14}{res}{space 2} .2608528{col 26}{space 2} .0503629{col 37}{space 1}    5.18{col 46}{space 3}0.000{col 54}{space 4} .1621434{col 67}{space 3} .3595622
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. drop if osa1==1 /*drop 6 observations*/
+{txt}(0 observations deleted)
+
+{com}. drop osa1
+{txt}
+{com}. drop p11-p15
+{txt}
+{com}. teffects psmatch (logwages2017) (FDI2016 i.($S)##c.($P)), osample(osa1) generate(p1) nneighbor(5) caliper(0.05)
+{res}
+{txt}Treatment-effects estimation{col 48}Number of obs {col 67}= {res}    11,317
+{txt:Estimator}{col 16}:{res: propensity-score matching}{col 48}{txt:Matches: requested }{col 67}{txt:=}          5
+{txt:Outcome model}{col 16}:{res: matching}{txt}{col 63}min {col 67}= {res}         5
+{txt:Treatment model}{col 16}:{res: logit}{col 63}{txt:max }{col 67}{txt:=}          5
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}   AI Robust
+{col 1}logwages2017{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      z{col 46}   P>|z|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}ATE          {txt}{c |}
+{space 5}FDI2016 {c |}
+{space 3}(1 vs 0)  {c |}{col 14}{res}{space 2} .2608528{col 26}{space 2} .0503629{col 37}{space 1}    5.18{col 46}{space 3}0.000{col 54}{space 4} .1621434{col 67}{space 3} .3595622
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. graph export overlap_cal_int.pdf, as(pdf) replace
+{txt}(file overlap_cal_int.pdf written in PDF format)
+
+{com}. tebalance summarize
+{res}
+{txt}{p 2 0 2}Covariate balance summary{p_end}
+{res}{col 42}{text}          Raw{col 55}      Matched
+{res}{col 27}{text}{hline 15}{hline 13}{hline 13}
+{col 27}{text}Number of obs ={col 42}{result}{space 3}    11,317{col 55}{space 3}    22,634
+{col 27}{text}Treated obs   ={col 42}{result}{space 3}     4,454{col 55}{space 3}    11,317
+{col 27}{text}Control obs   ={col 42}{result}{space 3}     6,863{col 55}{space 3}    11,317
+{col 27}{text}{hline 15}{hline 13}{hline 13}
+
+{res}{col 3}{text}{hline 16}{c TT}{hline 24}{hline 24}
+{col 19}{text}{c |}Standardized differences{col 44}          Variance ratio
+{res}{col 19}{text}{c |}        Raw{col 32}    Matched{col 44}          Raw{col 56}    Matched
+{res}{col 3}{text}{hline 16}{c +}{hline 12}{hline 12}{hline 12}{hline 12}
+{col 3}{text}            OWN{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0181583{col 32}{space 2}-.0495004{col 44}{space 4} .9772189{col 56}{space 2}  .938689
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0609651{col 32}{space 2} .0569085{col 44}{space 4} 1.023002{col 56}{space 2} 1.020727
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .1020575{col 32}{space 2}-.0066886{col 44}{space 4} 1.101329{col 56}{space 2} .9934784
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .4077905{col 32}{space 2}-.0793835{col 44}{space 4} 1.253353{col 56}{space 2} .9486084
+{col 19}{text}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}{result}{space 2}-.1303944{col 32}{space 2} .0345007{col 44}{space 4} .9772289{col 56}{space 2} 1.020388
+{col 3}{text}        TFP2015{col 19}{c |}{result}{space 2}-.1777876{col 32}{space 2}-.0040127{col 44}{space 4} .9458382{col 56}{space 2} .9036238
+{col 3}{text}     logemp2015{col 19}{c |}{result}{space 2} .5640854{col 32}{space 2} .0082563{col 44}{space 4} .8024711{col 56}{space 2} .7736623
+{col 3}{text}      DEBTS2015{col 19}{c |}{result}{space 2}-.0528173{col 32}{space 2}-.0182389{col 44}{space 4} 1.052203{col 56}{space 2} .9886807
+{col 3}{text}        EXP2015{col 19}{c |}{result}{space 2} 1.012743{col 32}{space 2}-.0012889{col 44}{space 4} 1.218442{col 56}{space 2}  .975161
+{col 3}{text}         RD2015{col 19}{c |}{result}{space 2}  .036167{col 32}{space 2} .0344826{col 44}{space 4} 1.087016{col 56}{space 2} 1.080985
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0499318{col 32}{space 2}-.0424091{col 44}{space 4} .8793906{col 56}{space 2} .9464555
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0089032{col 32}{space 2} .0695795{col 44}{space 4} .9611199{col 56}{space 2} 1.119435
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0579205{col 32}{space 2}  .006555{col 44}{space 4} 1.020109{col 56}{space 2} 1.004936
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}        TFP2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0633529{col 32}{space 2}-.0263498{col 44}{space 4} .8280666{col 56}{space 2} .9147051
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}-.0406975{col 32}{space 2} .0365392{col 44}{space 4} .8829941{col 56}{space 2} .9963941
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0561452{col 32}{space 2}-.0119349{col 44}{space 4} 1.041059{col 56}{space 2} .9225276
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}     logemp2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .1398384{col 32}{space 2}-.0313545{col 44}{space 4} 1.481369{col 56}{space 2} .8720077
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .2642361{col 32}{space 2} .0344528{col 44}{space 4} 1.403816{col 56}{space 2} .9747654
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .2399961{col 32}{space 2}-.0037596{col 44}{space 4} 1.529204{col 56}{space 2} .8335615
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}      DEBTS2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0442424{col 32}{space 2}-.0360279{col 44}{space 4} .8868233{col 56}{space 2} .9331868
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}-.0158652{col 32}{space 2} .0444608{col 44}{space 4} .9645318{col 56}{space 2} 1.048915
+{col 3}{text}         State{col 19}{c |}{result}{space 2}  .084555{col 32}{space 2} .0005468{col 44}{space 4} 1.079005{col 56}{space 2}  1.00649
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}        EXP2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .2091656{col 32}{space 2}-.0439183{col 44}{space 4} 2.145701{col 56}{space 2} .8910176
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .3999789{col 32}{space 2}  .034735{col 44}{space 4} 2.409967{col 56}{space 2} 1.039073
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .3630568{col 32}{space 2} .0073861{col 44}{space 4} 2.651432{col 56}{space 2} 1.016307
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}         RD2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .0130712{col 32}{space 2} .0039223{col 44}{space 4} 1.077974{col 56}{space 2}  1.02314
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0360851{col 32}{space 2} .0333405{col 44}{space 4} 1.162127{col 56}{space 2} 1.146998
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0408061{col 32}{space 2} .0054713{col 44}{space 4} 1.225838{col 56}{space 2} 1.026902
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .3113124{col 32}{space 2}-.0542532{col 44}{space 4} 1.295687{col 56}{space 2} .9383834
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}        TFP2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .2842889{col 32}{space 2}-.0638031{col 44}{space 4} 1.300671{col 56}{space 2} .9175231
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}     logemp2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .4087882{col 32}{space 2}-.0448878{col 44}{space 4} 1.572011{col 56}{space 2} .8620158
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}      DEBTS2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .3008764{col 32}{space 2}-.0671416{col 44}{space 4} 1.431773{col 56}{space 2} .8846379
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}        EXP2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .6513708{col 32}{space 2}-.0378428{col 44}{space 4} 2.624561{col 56}{space 2}  .923653
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}         RD2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2}  .118772{col 32}{space 2}-.0130609{col 44}{space 4} 1.725057{col 56}{space 2} .9386557
+{col 3}{text}{hline 16}{c BT}{hline 12}{hline 12}{hline 12}{hline 12}
+{res}{txt}
+{com}. drop osa1
+{txt}
+{com}. drop p11-p15
+{txt}
+{com}. 
+. 
+. 
+. *AIPW estimator
+. 
+. teffects aipw (logwages2017 i.($S) $P )(FDI2016 i.($S) $P ), osample(osa1) 
+
+{res}{txt}Iteration 0:{space 3}EE criterion = {res: 1.764e-22}  
+Iteration 1:{space 3}EE criterion = {res: 9.613e-32}  
+{res}
+{txt}Treatment-effects estimation{col 49}Number of obs {col 67}= {res}    11,317
+{txt:Estimator}{col 16}:{res: augmented IPW}
+{txt:Outcome model}{col 16}:{res: linear by ML}
+{txt:Treatment model}{col 16}:{res: logit}
+{txt}{hline 21}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 22}{c |}{col 34}    Robust
+{col 1}        logwages2017{col 22}{c |}      Coef.{col 34}   Std. Err.{col 46}      z{col 54}   P>|z|{col 62}     [95% Con{col 75}f. Interval]
+{hline 21}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}ATE                  {txt}{c |}
+{space 13}FDI2016 {c |}
+{space 11}(1 vs 0)  {c |}{col 22}{res}{space 2} .2364761{col 34}{space 2} .0080568{col 45}{space 1}   29.35{col 54}{space 3}0.000{col 62}{space 4}  .220685{col 75}{space 3} .2522672
+{txt}{hline 21}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}POmean               {txt}{c |}
+{space 13}FDI2016 {c |}
+{space 18}0  {c |}{col 22}{res}{space 2} 4.914149{col 34}{space 2} .0289125{col 45}{space 1}  169.97{col 54}{space 3}0.000{col 62}{space 4} 4.857482{col 75}{space 3} 4.970817
+{txt}{hline 21}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. graph export overlap_APIW_norm.pdf, as(pdf) replace
+{txt}(file overlap_APIW_norm.pdf written in PDF format)
+
+{com}. tebalance summarize
+
+{txt}{p 2 0 2}Covariate balance summary{p_end}
+{res}{col 42}{text}          Raw{col 55}     Weighted
+{res}{col 27}{text}{hline 15}{hline 13}{hline 13}
+{col 27}{text}Number of obs ={col 42}{result}{space 3}    11,317{col 55}{space 3}  11,317.0
+{col 27}{text}Treated obs   ={col 42}{result}{space 3}     4,454{col 55}{space 3}   5,661.3
+{col 27}{text}Control obs   ={col 42}{result}{space 3}     6,863{col 55}{space 3}   5,655.7
+{col 27}{text}{hline 15}{hline 13}{hline 13}
+
+{res}{col 3}{text}{hline 16}{c TT}{hline 24}{hline 24}
+{col 19}{text}{c |}Standardized differences{col 44}          Variance ratio
+{res}{col 19}{text}{c |}        Raw{col 32}   Weighted{col 44}          Raw{col 56}   Weighted
+{res}{col 3}{text}{hline 16}{c +}{hline 12}{hline 12}{hline 12}{hline 12}
+{col 3}{text}            OWN{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0181583{col 32}{space 2}-.0085629{col 44}{space 4} .9772189{col 56}{space 2} .9892034
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0609651{col 32}{space 2} .0404436{col 44}{space 4} 1.023002{col 56}{space 2} 1.013869
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .1020575{col 32}{space 2}-.0030102{col 44}{space 4} 1.101329{col 56}{space 2} .9970591
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .4077905{col 32}{space 2}-.0469134{col 44}{space 4} 1.253353{col 56}{space 2} .9714775
+{col 19}{text}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}{result}{space 2}-.1303944{col 32}{space 2} .0010077{col 44}{space 4} .9772289{col 56}{space 2} 1.020533
+{col 3}{text}        TFP2015{col 19}{c |}{result}{space 2}-.1777876{col 32}{space 2}-.0075647{col 44}{space 4} .9458382{col 56}{space 2} .9303043
+{col 3}{text}     logemp2015{col 19}{c |}{result}{space 2} .5640854{col 32}{space 2} .0159405{col 44}{space 4} .8024711{col 56}{space 2} .7562026
+{col 3}{text}      DEBTS2015{col 19}{c |}{result}{space 2}-.0528173{col 32}{space 2}-.0224323{col 44}{space 4} 1.052203{col 56}{space 2} 1.020903
+{col 3}{text}        EXP2015{col 19}{c |}{result}{space 2} 1.012743{col 32}{space 2} .0190874{col 44}{space 4} 1.218442{col 56}{space 2} 1.048709
+{col 3}{text}         RD2015{col 19}{c |}{result}{space 2}  .036167{col 32}{space 2} .0220038{col 44}{space 4} 1.087016{col 56}{space 2} 1.052129
+{col 3}{text}{hline 16}{c BT}{hline 12}{hline 12}{hline 12}{hline 12}
+{res}{txt}
+{com}. drop osa1
+{txt}
+{com}. 
+. 
+. teffects aipw (logwages2017 i.($S)##c.($P) )(FDI2016 i.($S)##c.($P)), osample(osa1) 
+
+{res}{txt}Iteration 0:{space 3}EE criterion = {res: 4.676e-25}  
+Iteration 1:{space 3}EE criterion = {res: 3.615e-32}  
+{res}
+{txt}Treatment-effects estimation{col 49}Number of obs {col 67}= {res}    11,317
+{txt:Estimator}{col 16}:{res: augmented IPW}
+{txt:Outcome model}{col 16}:{res: linear by ML}
+{txt:Treatment model}{col 16}:{res: logit}
+{txt}{hline 21}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 22}{c |}{col 34}    Robust
+{col 1}        logwages2017{col 22}{c |}      Coef.{col 34}   Std. Err.{col 46}      z{col 54}   P>|z|{col 62}     [95% Con{col 75}f. Interval]
+{hline 21}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}ATE                  {txt}{c |}
+{space 13}FDI2016 {c |}
+{space 11}(1 vs 0)  {c |}{col 22}{res}{space 2} .2370676{col 34}{space 2} .0084694{col 45}{space 1}   27.99{col 54}{space 3}0.000{col 62}{space 4} .2204679{col 75}{space 3} .2536674
+{txt}{hline 21}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}POmean               {txt}{c |}
+{space 13}FDI2016 {c |}
+{space 18}0  {c |}{col 22}{res}{space 2} 4.914301{col 34}{space 2} .0289105{col 45}{space 1}  169.98{col 54}{space 3}0.000{col 62}{space 4} 4.857637{col 75}{space 3} 4.970964
+{txt}{hline 21}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. graph export overlap_APIW_int.pdf, as(pdf) replace
+{txt}(file overlap_APIW_int.pdf written in PDF format)
+
+{com}. tebalance summarize
+
+{txt}{p 2 0 2}Covariate balance summary{p_end}
+{res}{col 42}{text}          Raw{col 55}     Weighted
+{res}{col 27}{text}{hline 15}{hline 13}{hline 13}
+{col 27}{text}Number of obs ={col 42}{result}{space 3}    11,317{col 55}{space 3}  11,317.0
+{col 27}{text}Treated obs   ={col 42}{result}{space 3}     4,454{col 55}{space 3}   5,655.6
+{col 27}{text}Control obs   ={col 42}{result}{space 3}     6,863{col 55}{space 3}   5,661.4
+{col 27}{text}{hline 15}{hline 13}{hline 13}
+
+{res}{col 3}{text}{hline 16}{c TT}{hline 24}{hline 24}
+{col 19}{text}{c |}Standardized differences{col 44}          Variance ratio
+{res}{col 19}{text}{c |}        Raw{col 32}   Weighted{col 44}          Raw{col 56}   Weighted
+{res}{col 3}{text}{hline 16}{c +}{hline 12}{hline 12}{hline 12}{hline 12}
+{col 3}{text}            OWN{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0181583{col 32}{space 2} -.026259{col 44}{space 4} .9772189{col 56}{space 2} .9668852
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0609651{col 32}{space 2} .0342114{col 44}{space 4} 1.023002{col 56}{space 2} 1.012577
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .1020575{col 32}{space 2}-.0105479{col 44}{space 4} 1.101329{col 56}{space 2} .9897614
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .4077905{col 32}{space 2}-.0810193{col 44}{space 4} 1.253353{col 56}{space 2} .9484826
+{col 19}{text}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}{result}{space 2}-.1303944{col 32}{space 2}  .010808{col 44}{space 4} .9772289{col 56}{space 2} 1.020645
+{col 3}{text}        TFP2015{col 19}{c |}{result}{space 2}-.1777876{col 32}{space 2}-.0035783{col 44}{space 4} .9458382{col 56}{space 2} .9159965
+{col 3}{text}     logemp2015{col 19}{c |}{result}{space 2} .5640854{col 32}{space 2} .0188837{col 44}{space 4} .8024711{col 56}{space 2} .7912995
+{col 3}{text}      DEBTS2015{col 19}{c |}{result}{space 2}-.0528173{col 32}{space 2}-.0203246{col 44}{space 4} 1.052203{col 56}{space 2}  .982911
+{col 3}{text}        EXP2015{col 19}{c |}{result}{space 2} 1.012743{col 32}{space 2} .0053615{col 44}{space 4} 1.218442{col 56}{space 2} .9669929
+{col 3}{text}         RD2015{col 19}{c |}{result}{space 2}  .036167{col 32}{space 2} .0305442{col 44}{space 4} 1.087016{col 56}{space 2} 1.071712
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0499318{col 32}{space 2}-.0301492{col 44}{space 4} .8793906{col 56}{space 2} .9568651
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0089032{col 32}{space 2} .0482139{col 44}{space 4} .9611199{col 56}{space 2} 1.093597
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0579205{col 32}{space 2} -.005724{col 44}{space 4} 1.020109{col 56}{space 2}  .982088
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}        TFP2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0633529{col 32}{space 2}-.0190521{col 44}{space 4} .8280666{col 56}{space 2} .9178086
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}-.0406975{col 32}{space 2} .0240835{col 44}{space 4} .8829941{col 56}{space 2}  .998347
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0561452{col 32}{space 2}-.0130329{col 44}{space 4} 1.041059{col 56}{space 2} .9264794
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}     logemp2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .1398384{col 32}{space 2} -.008283{col 44}{space 4} 1.481369{col 56}{space 2} .9228509
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .2642361{col 32}{space 2} .0197017{col 44}{space 4} 1.403816{col 56}{space 2} .9528675
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .2399961{col 32}{space 2} .0005327{col 44}{space 4} 1.529204{col 56}{space 2} .8760606
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}      DEBTS2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0442424{col 32}{space 2}-.0289057{col 44}{space 4} .8868233{col 56}{space 2}  .932319
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}-.0158652{col 32}{space 2} .0324871{col 44}{space 4} .9645318{col 56}{space 2} 1.039479
+{col 3}{text}         State{col 19}{c |}{result}{space 2}  .084555{col 32}{space 2}-.0044299{col 44}{space 4} 1.079005{col 56}{space 2} .9975152
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}        EXP2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .2091656{col 32}{space 2}-.0182154{col 44}{space 4} 2.145701{col 56}{space 2} .9372352
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .3999789{col 32}{space 2} .0144081{col 44}{space 4} 2.409967{col 56}{space 2} 1.011199
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .3630568{col 32}{space 2} .0005575{col 44}{space 4} 2.651432{col 56}{space 2} 1.000339
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}         RD2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .0130712{col 32}{space 2}  .004093{col 44}{space 4} 1.077974{col 56}{space 2} 1.024119
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0360851{col 32}{space 2} .0219074{col 44}{space 4} 1.162127{col 56}{space 2} 1.095957
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0408061{col 32}{space 2} .0092362{col 44}{space 4} 1.225838{col 56}{space 2} 1.045261
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .3113124{col 32}{space 2}-.0740786{col 44}{space 4} 1.295687{col 56}{space 2} .9056361
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}        TFP2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .2842889{col 32}{space 2}-.0650442{col 44}{space 4} 1.300671{col 56}{space 2} .9168841
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}     logemp2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .4087882{col 32}{space 2}-.0395949{col 44}{space 4} 1.572011{col 56}{space 2} .8868581
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}      DEBTS2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .3008764{col 32}{space 2}-.0754036{col 44}{space 4} 1.431773{col 56}{space 2} .8654012
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}        EXP2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .6513708{col 32}{space 2}-.0428035{col 44}{space 4} 2.624561{col 56}{space 2} .9144224
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}         RD2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2}  .118772{col 32}{space 2}-.0212543{col 44}{space 4} 1.725057{col 56}{space 2} .9028324
+{col 3}{text}{hline 16}{c BT}{hline 12}{hline 12}{hline 12}{hline 12}
+{res}{txt}
+{com}. drop osa1
+{txt}
+{com}. 
+. *AIPW types of FDI 
+. 
+. 
+. teffects aipw (logwages2017  i.($S)##c.($P) )(FDITYPE2016  i.($S)##c.($P) ) , osample(osa1)
+
+{res}{txt}Iteration 0:{space 3}EE criterion = {res: 1.050e-17}  
+Iteration 1:{space 3}EE criterion = {res: 3.406e-30}  
+{res}
+{txt}Treatment-effects estimation{col 49}Number of obs {col 67}= {res}    11,317
+{txt:Estimator}{col 16}:{res: augmented IPW}
+{txt:Outcome model}{col 16}:{res: linear by ML}
+{txt:Treatment model}{col 16}:{res: (multinomial) logit}
+{txt}{hline 42}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 43}{c |}{col 55}    Robust
+{col 1}                             logwages2017{col 43}{c |}      Coef.{col 55}   Std. Err.{col 67}      z{col 75}   P>|z|{col 83}     [95% Con{col 96}f. Interval]
+{hline 42}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}ATE                                       {txt}{c |}
+{space 30}FDITYPE2016 {c |}
+{space 8}(Exports-oriented FDI vs No FDI)  {c |}{col 43}{res}{space 2} .2697953{col 55}{space 2} .0195052{col 66}{space 1}   13.83{col 75}{space 3}0.000{col 83}{space 4} .2315659{col 96}{space 3} .3080247
+{txt}{space 4}(Technology intensive FDI vs No FDI)  {c |}{col 43}{res}{space 2} .2314858{col 55}{space 2} .0111602{col 66}{space 1}   20.74{col 75}{space 3}0.000{col 83}{space 4} .2096121{col 96}{space 3} .2533594
+{txt}( Domestic market seeking FDI vs No FDI)  {c |}{col 43}{res}{space 2} .2276356{col 55}{space 2} .0113523{col 66}{space 1}   20.05{col 75}{space 3}0.000{col 83}{space 4} .2053855{col 96}{space 3} .2498857
+{txt}{hline 42}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}POmean                                    {txt}{c |}
+{space 30}FDITYPE2016 {c |}
+{space 34}No FDI  {c |}{col 43}{res}{space 2}  4.91428{col 55}{space 2} .0289114{col 66}{space 1}  169.98{col 75}{space 3}0.000{col 83}{space 4} 4.857615{col 96}{space 3} 4.970946
+{txt}{hline 42}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. tebalance summarize
+
+{txt}{p 2 0 2}Covariate balance summary{p_end}
+{res}{col 42}{text}        Observations      
+{res}{col 27}{text}     Treatment{col 42}          Raw{col 55}     Weighted
+{res}{col 27}{text}{hline 15}{hline 13}{hline 13}
+{col 27}{text}No FDI        ={col 42}{result}{space 3}     6,863{col 55}{space 3}   2,820.6
+{col 27}{text}Exports-ori~I ={col 42}{result}{space 3}       939{col 55}{space 3}   2,868.5
+{col 27}{text}Technology ~I ={col 42}{result}{space 3}     1,554{col 55}{space 3}   2,702.7
+{col 27}{text}Domestic ma~I ={col 42}{result}{space 3}     1,961{col 55}{space 3}   2,925.2
+{col 27}{text}Total         ={col 42}{result}{space 3}    11,317{col 55}{space 3}  11,317.0
+{col 27}{text}{hline 15}{hline 13}{hline 13}
+
+{res}{col 3}{text}{hline 16}{c TT}{hline 24}{hline 24}
+{col 19}{text}{c |}Standardized differences{col 44}          Variance ratio
+{res}{col 19}{text}{c |}        Raw{col 32}   Weighted{col 44}          Raw{col 56}   Weighted
+{res}{col 3}{text}{hline 16}{c +}{hline 12}{hline 12}{hline 12}{hline 12}
+{col 3}{result}Exports-orien~I{col 19}{text}{c |}
+{res}{col 3}{text}            OWN{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .0299301{col 32}{space 2}-.0447477{col 44}{space 4} 1.037745{col 56}{space 2} .9430971
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0699598{col 32}{space 2} .0521472{col 44}{space 4} 1.026629{col 56}{space 2} 1.018254
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0626746{col 32}{space 2}-.0007743{col 44}{space 4} 1.065223{col 56}{space 2} .9992489
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .4574312{col 32}{space 2}-.1123545{col 44}{space 4} 1.259685{col 56}{space 2} .9256753
+{col 19}{text}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}{result}{space 2}-.1831761{col 32}{space 2} .0740836{col 44}{space 4} .9457678{col 56}{space 2} .9996764
+{col 3}{text}        TFP2015{col 19}{c |}{result}{space 2}-.2120149{col 32}{space 2}-.0202022{col 44}{space 4}   .96611{col 56}{space 2} .8425383
+{col 3}{text}     logemp2015{col 19}{c |}{result}{space 2} .5171857{col 32}{space 2}-.0014828{col 44}{space 4} .8155519{col 56}{space 2} .8324726
+{col 3}{text}      DEBTS2015{col 19}{c |}{result}{space 2}-.0667449{col 32}{space 2}-.0646976{col 44}{space 4} 1.025856{col 56}{space 2} .9958304
+{col 3}{text}        EXP2015{col 19}{c |}{result}{space 2} 1.001494{col 32}{space 2} -.029052{col 44}{space 4} 1.129291{col 56}{space 2} 1.033638
+{col 3}{text}         RD2015{col 19}{c |}{result}{space 2}-.1974648{col 32}{space 2}-.0077286{col 44}{space 4} .5541944{col 56}{space 2} .9819854
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0271633{col 32}{space 2}-.0071585{col 44}{space 4} .9000784{col 56}{space 2} 1.083165
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} -.007336{col 32}{space 2} .0769467{col 44}{space 4} .9149374{col 56}{space 2} 1.101483
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0290849{col 32}{space 2}-.0036443{col 44}{space 4} .9579978{col 56}{space 2} .9403811
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}        TFP2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0489179{col 32}{space 2}-.0431902{col 44}{space 4} .8347667{col 56}{space 2} .9169357
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}-.0085148{col 32}{space 2} .0533157{col 44}{space 4} .9515307{col 56}{space 2} .9924777
+{col 3}{text}         State{col 19}{c |}{result}{space 2} -.035094{col 32}{space 2}-.0103448{col 44}{space 4}   .83975{col 56}{space 2} .8730502
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}     logemp2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .1837414{col 32}{space 2}-.0142563{col 44}{space 4} 1.520751{col 56}{space 2} .9004229
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .2532767{col 32}{space 2}-.0070801{col 44}{space 4} 1.404712{col 56}{space 2} .9717117
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .1812863{col 32}{space 2} .0213834{col 44}{space 4} 1.388198{col 56}{space 2} .8909452
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}      DEBTS2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0083952{col 32}{space 2}-.0487604{col 44}{space 4} .9538484{col 56}{space 2} .8882602
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0080884{col 32}{space 2} .0249682{col 44}{space 4}  1.01806{col 56}{space 2} 1.107893
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0406919{col 32}{space 2}-.0259791{col 44}{space 4} 1.014224{col 56}{space 2} .9352527
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}        EXP2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .2526835{col 32}{space 2}-.0332601{col 44}{space 4} 2.210725{col 56}{space 2} .9133631
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .3991059{col 32}{space 2} .0037398{col 44}{space 4} 2.300444{col 56}{space 2} 1.003369
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .3276413{col 32}{space 2}-.0079125{col 44}{space 4} 2.558533{col 56}{space 2} .9741388
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}         RD2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0667448{col 32}{space 2}-.0588736{col 44}{space 4}  .642523{col 56}{space 2}  .681297
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} -.108354{col 32}{space 2} .0202665{col 44}{space 4} .5727208{col 56}{space 2} 1.088332
+{col 3}{text}         State{col 19}{c |}{result}{space 2}-.1149715{col 32}{space 2} .0365712{col 44}{space 4} .4696557{col 56}{space 2} 1.183961
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .3336079{col 32}{space 2}-.0917576{col 44}{space 4} 1.286148{col 56}{space 2} .9388465
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}        TFP2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .2914555{col 32}{space 2} -.100987{col 44}{space 4} 1.268912{col 56}{space 2} .8678883
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}     logemp2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2}  .415557{col 32}{space 2}-.0580978{col 44}{space 4} 1.497364{col 56}{space 2} .8691941
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}      DEBTS2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .3236821{col 32}{space 2} -.111826{col 44}{space 4} 1.448032{col 56}{space 2} .8229595
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}        EXP2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .6795075{col 32}{space 2}-.0713646{col 44}{space 4} 2.478164{col 56}{space 2} .8897955
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}         RD2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2}-.0033891{col 32}{space 2}-.0347197{col 44}{space 4} .9827798{col 56}{space 2} .8438569
+{col 3}{text}{hline 16}{c +}{hline 12}{hline 12}{hline 12}{hline 12}
+{col 3}{result}Technology in~I{col 19}{text}{c |}
+{res}{col 3}{text}            OWN{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0224348{col 32}{space 2}-.0113405{col 44}{space 4} .9721844{col 56}{space 2} .9858089
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0304331{col 32}{space 2}-.0185155{col 44}{space 4} 1.012858{col 56}{space 2} .9922636
+{col 3}{text}         State{col 19}{c |}{result}{space 2}  .134637{col 32}{space 2} .0323719{col 44}{space 4} 1.130267{col 56}{space 2} 1.030323
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .3525332{col 32}{space 2}-.0319018{col 44}{space 4} 1.241233{col 56}{space 2} .9811047
+{col 19}{text}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}{result}{space 2}-.1375995{col 32}{space 2}-.0039099{col 44}{space 4} .9808177{col 56}{space 2} .9684528
+{col 3}{text}        TFP2015{col 19}{c |}{result}{space 2}-.2083806{col 32}{space 2}-.0512203{col 44}{space 4} .9478798{col 56}{space 2} .8764155
+{col 3}{text}     logemp2015{col 19}{c |}{result}{space 2} .5928687{col 32}{space 2} .0876304{col 44}{space 4} .7836997{col 56}{space 2} .7220294
+{col 3}{text}      DEBTS2015{col 19}{c |}{result}{space 2}-.0188102{col 32}{space 2} .0176618{col 44}{space 4} 1.105783{col 56}{space 2} 1.003137
+{col 3}{text}        EXP2015{col 19}{c |}{result}{space 2} .9430214{col 32}{space 2} .0639874{col 44}{space 4} 1.232818{col 56}{space 2} .8844206
+{col 3}{text}         RD2015{col 19}{c |}{result}{space 2}-.0892942{col 32}{space 2}-.0072382{col 44}{space 4} .7912905{col 56}{space 2} .9831477
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0401435{col 32}{space 2}-.0087745{col 44}{space 4} .9288916{col 56}{space 2} 1.018037
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}-.0318052{col 32}{space 2}-.0280698{col 44}{space 4} .9098759{col 56}{space 2}  .970799
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0812154{col 32}{space 2} .0410516{col 44}{space 4} 1.057523{col 56}{space 2} 1.061075
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}        TFP2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0599518{col 32}{space 2} -.017238{col 44}{space 4} .8639857{col 56}{space 2} .9288568
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}-.0717742{col 32}{space 2}-.0439295{col 44}{space 4}  .836314{col 56}{space 2} .9063073
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0615431{col 32}{space 2} .0133474{col 44}{space 4}  1.04648{col 56}{space 2} .9460228
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}     logemp2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .1549677{col 32}{space 2} .0068816{col 44}{space 4} 1.558199{col 56}{space 2} .9427532
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}  .231425{col 32}{space 2} .0501431{col 44}{space 4} 1.320143{col 56}{space 2} .9580896
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .2818296{col 32}{space 2} .0139042{col 44}{space 4} 1.657669{col 56}{space 2} .9140928
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}      DEBTS2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} -.028113{col 32}{space 2}-.0293498{col 44}{space 4} .9535955{col 56}{space 2} .9340429
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}-.0484572{col 32}{space 2}-.0073667{col 44}{space 4} .9492226{col 56}{space 2} .9984281
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .1254299{col 32}{space 2} .0434713{col 44}{space 4} 1.136325{col 56}{space 2} 1.052262
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}        EXP2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .2030515{col 32}{space 2} .0047903{col 44}{space 4} 2.126478{col 56}{space 2} .9783075
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .3392955{col 32}{space 2} .0238186{col 44}{space 4} 2.205657{col 56}{space 2} 1.047318
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .3843815{col 32}{space 2} .0258765{col 44}{space 4} 2.628975{col 56}{space 2} 1.018461
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}         RD2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0276424{col 32}{space 2}-.0556049{col 44}{space 4} .8441873{col 56}{space 2} .6976839
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}-.0449496{col 32}{space 2} -.020359{col 44}{space 4} .8121818{col 56}{space 2} .9142423
+{col 3}{text}         State{col 19}{c |}{result}{space 2}-.0274096{col 32}{space 2} .0484866{col 44}{space 4} .8599807{col 56}{space 2}  1.24673
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .2783013{col 32}{space 2}-.0250662{col 44}{space 4} 1.272394{col 56}{space 2}  .949031
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}        TFP2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .2318004{col 32}{space 2}-.0223448{col 44}{space 4} 1.255231{col 56}{space 2} .9659858
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}     logemp2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .3828857{col 32}{space 2} .0036779{col 44}{space 4} 1.577742{col 56}{space 2} .9183491
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}      DEBTS2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .2686154{col 32}{space 2}-.0338213{col 44}{space 4} 1.421425{col 56}{space 2} .9140567
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}        EXP2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .5893307{col 32}{space 2}-.0034359{col 44}{space 4}  2.53902{col 56}{space 2} .9351175
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}         RD2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .0519069{col 32}{space 2}-.0110253{col 44}{space 4} 1.296072{col 56}{space 2} .9492796
+{col 3}{text}{hline 16}{c +}{hline 12}{hline 12}{hline 12}{hline 12}
+{col 3}{result}Domestic mark~I{col 19}{text}{c |}
+{res}{col 3}{text}            OWN{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} -.038284{col 32}{space 2} -.048323{col 44}{space 4} .9517181{col 56}{space 2} .9384533
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}  .080761{col 32}{space 2} .0813471{col 44}{space 4} 1.029155{col 56}{space 2} 1.026112
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0947672{col 32}{space 2}-.0512967{col 44}{space 4} 1.095006{col 56}{space 2} .9487216
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .4279511{col 32}{space 2}-.1074268{col 44}{space 4} 1.256545{col 56}{space 2} .9293603
+{col 19}{text}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}{result}{space 2}-.0997354{col 32}{space 2}-.0203774{col 44}{space 4} .9882365{col 56}{space 2} 1.085993
+{col 3}{text}        TFP2015{col 19}{c |}{result}{space 2}-.1370105{col 32}{space 2} .0354274{col 44}{space 4} .9325193{col 56}{space 2} .9432911
+{col 3}{text}     logemp2015{col 19}{c |}{result}{space 2} .5640258{col 32}{space 2}-.0315267{col 44}{space 4} .8105551{col 56}{space 2} .7977496
+{col 3}{text}      DEBTS2015{col 19}{c |}{result}{space 2}-.0736539{col 32}{space 2}-.0439683{col 44}{space 4} 1.021993{col 56}{space 2} .9485094
+{col 3}{text}        EXP2015{col 19}{c |}{result}{space 2} 1.075149{col 32}{space 2}-.0474806{col 44}{space 4} 1.241396{col 56}{space 2}  1.01388
+{col 3}{text}         RD2015{col 19}{c |}{result}{space 2}  .209276{col 32}{space 2} .0459233{col 44}{space 4} 1.505465{col 56}{space 2}  1.10775
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0690057{col 32}{space 2}-.0804133{col 44}{space 4} .8305607{col 56}{space 2} .8158839
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .0478302{col 32}{space 2} .1019635{col 44}{space 4} 1.021877{col 56}{space 2}  1.18393
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0528877{col 32}{space 2}-.0453407{col 44}{space 4} 1.020326{col 56}{space 2} .9237281
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}        TFP2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} -.073075{col 32}{space 2}-.0232978{col 44}{space 4} .7970731{col 56}{space 2} .8933869
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}-.0320838{col 32}{space 2} .0705678{col 44}{space 4} .8868702{col 56}{space 2} 1.060617
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0926724{col 32}{space 2} -.036474{col 44}{space 4} 1.128716{col 56}{space 2} .9123077
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}     logemp2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .1059957{col 32}{space 2}-.0340778{col 44}{space 4} 1.400061{col 56}{space 2} .8920608
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .2947537{col 32}{space 2} .0103675{col 44}{space 4} 1.468326{col 56}{space 2} .9131806
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .2335576{col 32}{space 2}-.0206386{col 44}{space 4} 1.491505{col 56}{space 2} .8348509
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}      DEBTS2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}-.0754603{col 32}{space 2}-.0380689{col 44}{space 4} .8011657{col 56}{space 2} .9211314
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}-.0017157{col 32}{space 2} .0762573{col 44}{space 4} .9507422{col 56}{space 2} 1.055718
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .0723902{col 32}{space 2}-.0450773{col 44}{space 4} 1.063047{col 56}{space 2} .9504194
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}        EXP2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2}  .192906{col 32}{space 2}-.0411448{col 44}{space 4} 2.129902{col 56}{space 2} .9090082
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2} .4466067{col 32}{space 2} .0062707{col 44}{space 4}  2.61377{col 56}{space 2} .9710541
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .3629463{col 32}{space 2}-.0255518{col 44}{space 4} 2.714413{col 56}{space 2} .9761504
+{col 19}{text}{c |}
+{res}{col 3}{text}            OWN#{col 19}{c |}
+{res}{col 3}{text}         RD2015{col 19}{c |}
+{res}{col 3}{text}  Subsidiaries{col 19}{c |}{result}{space 2} .0723036{col 32}{space 2} .0260634{col 44}{space 4} 1.464356{col 56}{space 2} 1.157619
+{col 3}{text}   Independent{col 19}{c |}{result}{space 2}  .142316{col 32}{space 2} .0353325{col 44}{space 4} 1.692706{col 56}{space 2} 1.155879
+{col 3}{text}         State{col 19}{c |}{result}{space 2} .1389798{col 32}{space 2}-.0122653{col 44}{space 4} 1.850324{col 56}{space 2} .9412104
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}   logwages2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .3266407{col 32}{space 2}-.1033518{col 44}{space 4} 1.318365{col 56}{space 2} .8717095
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}        TFP2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .3219114{col 32}{space 2}-.0843896{col 44}{space 4} 1.348519{col 56}{space 2} .8858237
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}     logemp2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .4260339{col 32}{space 2}-.0659913{col 44}{space 4} 1.603628{col 56}{space 2} .8640339
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}      DEBTS2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .3154415{col 32}{space 2} -.095318{col 44}{space 4} 1.432022{col 56}{space 2} .8403884
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}        EXP2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .6870926{col 32}{space 2}-.0611137{col 44}{space 4} 2.753898{col 56}{space 2}  .903902
+{col 19}{text}{c |}
+{res}{col 3}{text}           PORT#{col 19}{c |}
+{res}{col 3}{text}         RD2015{col 19}{c |}
+{res}{col 3}{text}Ports within~m{col 19}{c |}{result}{space 2} .2092877{col 32}{space 2}-.0331188{col 44}{space 4} 2.388917{col 56}{space 2} .8508165
+{col 3}{text}{hline 16}{c BT}{hline 12}{hline 12}{hline 12}{hline 12}
+{res}{txt}
+{com}. teffects overlap, ptlevel(1) saving(overlap_type_m1.gph, replace)
+{res}{txt}(note: file overlap_type_m1.gph not found)
+{res}{txt}(file overlap_type_m1.gph saved)
+
+{com}. teffects overlap, ptlevel(2) saving(overlap_type_m2.gph, replace)
+{res}{txt}(note: file overlap_type_m2.gph not found)
+{res}{txt}(file overlap_type_m2.gph saved)
+
+{com}. teffects overlap, ptlevel(3) saving(overlap_type_m3.gph, replace)
+{res}{txt}(note: file overlap_type_m3.gph not found)
+{res}{txt}(file overlap_type_m3.gph saved)
+
+{com}. 
+. 
+. drop osa1
+{txt}
+{com}. log close
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}C:\Users\schne\Documents\GitHub\fdimatching\02_scripts\wages\02_Descriptive_Analysis_wages.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}26 Mar 2020, 16:28:09
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

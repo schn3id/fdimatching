@@ -1,0 +1,5 @@
+1. analyse one outcome for different techs subsamples on main model (ps matching nn5 caliper, no interaction), nelly georg, on 
+2. differentiate ATT, ATE, ATN in FDITYPES model without interactions, thea
+3. lit yonesse 
+
+wait for girma response 
