@@ -45,7 +45,7 @@
 	
 //	TECH 
 	tab2 TECH FDI2016, col
-	twoway kdensity TECH if FDI2016==0 || kdensity TECH if FDI2016==1, ///
+	twoway hist TECH if FDI2016==0 || hist TECH if FDI2016==1, ///
 	legend(order(1 "control" 2 "treated"))	
 	/* Low-tech firms seem to be more likely to get FDI than high-tech firms
 	 --> Significant imbalance, might cause trouble if prediciton is "too good"		*/

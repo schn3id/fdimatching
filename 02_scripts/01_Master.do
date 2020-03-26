@@ -24,7 +24,7 @@
 *------------------------------------------------------------------------------*
 
 //	Adjust root file:	
-	global root	"C:\Users\schne\Documents\GitHub\fdimatching"
+	global root	"C:\Users\Emilie\Documents\GitHub\fdimatching"
 
 	global temp		"$root\00_temp"
 	global input	"$root\01_input"
