@@ -284,14 +284,14 @@ tebalance summarize
 
 *ATET is not possible for AIWP
 ****----------------------------------IPW--------------------------------------*
-cap drop 
-osa1 teffects ipw (TFP2017  logemp2015 logwages2015 TFP2015 EXP2015 i.PORT i.OWN i.TECH)(FDITYPE2016 logemp2015 logwages2015  TFP2015 EXP2015 i.PORT i.OWN i.TECH) if FDITYPE!=0  , osample(osa1) 
+cap drop osa1 
+teffects ipw (TFP2017  logemp2015 logwages2015 TFP2015 EXP2015 i.PORT i.OWN i.TECH)(FDITYPE2016 logemp2015 logwages2015  TFP2015 EXP2015 i.PORT i.OWN i.TECH) if FDITYPE!=0  , osample(osa1) 
 **
  cap drop osa1 
  teffects ipw (TFP2017)(FDI2016 logemp2015 logwages2015 TFP2015 EXP2015 i.PORT i.OWN i.TECH), osample(osa1)
 **by FDITYPE2016: ATE
- cap drop osa1
- teffects ipw (TFP2017)(FDITYPE2016 logemp2015 logwages2015  TFP2015 EXP2015 i.PORT i.OWN i.TECH) if osa1==0
+cap drop osa1
+teffects ipw (TFP2017)(FDITYPE2016 logemp2015 logwages2015  TFP2015 EXP2015 i.PORT i.OWN i.TECH) if osa1==0
 **by FDITYPE2016: ATET: negative results 
  cap drop osa1
  teffects ipw (TFP2017)(FDITYPE2016 logemp2015 logwages2015  TFP2015 EXP2015 i.PORT i.OWN i.TECH),atet osample(osa1)
