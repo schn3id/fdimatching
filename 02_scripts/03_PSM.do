@@ -277,7 +277,7 @@
 	teffects overlap, ptlevel(1) saving($results\overl_prob_comp1.gph, replace)
 	graph export $results\overl_prob_comp1.pdf, as(pdf) replace
 	// Catastrophic overlap
-	
+
 	
 *____________________________________________Deleting problematic variable: TECH
 	
@@ -295,6 +295,7 @@
 	tebalance summarize
 	// SD way below 10% for all variables. VR fine.
 
+	
 *_________________________________________Deleting problematic variable: EXP2015
 
 	cap drop osa1 
@@ -310,8 +311,360 @@
 	
 	tebalance summarize
 	// SD not great, some above 10% but none above 20%. VR fine.
+	
 
 
+*_______________________________Deleting problematic variables: TECH and EXP2015
+	
+	cap drop osa1 
+	cap drop p1 
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 /*EXP2015*/ RD2015, probit),	///
+					  osample(osa1) generate(p1)
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_prob_noTECHEXP.gph, replace)
+	graph export $results\overl_prob_noTECHEXP.pdf, as(pdf) replace
+	// Ok overlap except left-hand tail.
+	
+	tebalance summarize
+	// SD and VR fine.
+	
+*____________________________Deleting problematic variables: TECH and logemp2015
+	
+	cap drop osa1 
+	cap drop p1 
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 /*logemp2015*/ DEBTS2015 EXP2015 RD2015, probit),	///
+					  osample(osa1) generate(p1)
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_prob_noTECHemp.gph, replace)
+	graph export $results\overl_prob_noTECHemp.pdf, as(pdf) replace
+	// Ok overlap, but tails still not so good.
+	
+	tebalance summarize
+	// SD way below 10% for all variables. VR fine.
+
+	
+*___________________Deleting problematic variables: TECH, EXP2015 and logemp2015
+	
+	cap drop osa1 
+	cap drop p1 
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 /*logemp2015*/ DEBTS2015 /*EXP2015*/ RD2015, probit),	///
+					  osample(osa1) generate(p1)
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_prob_noTECHEXPemp.gph, replace)
+	graph export $results\overl_prob_noTECHEXPemp.pdf, as(pdf) replace
+	// Very good overlap, left-hand tail still not perfect but acceptable.
+	
+	tebalance summarize
+	// SD very good, VR also fine.			
+	
+	
+*_________________________________Probit [wages] w/o TECH, using 5NN and Caliper
+	
+	cap drop osa1 
+	cap drop p1* 
+	cap teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit),	///
+					  nneighbor(5) caliper(.05) osample(osa1) generate(p1)
+	 // 5 observations violate caliper
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit) if osa1==0,	///
+					  nneighbor(5) caliper(.05)  generate(p1) 
+	
+	teffects overlap, ptlevel(1) saving($results\overl_WAGES_prob_noTECH_nn5.gph, replace)
+	graph export $results\overl_WAGES_prob_noTECH_nn5.pdf, as(pdf) replace
+	// Much better overlap
+	
+	tebalance summarize
+	// SD way below 10% for all variables. VR fine.
+
+
+*__________Probit [wages] w/o TECH including interactions, using 5NN and Caliper
+	
+	cap drop osa1 
+	cap drop p1* 
+	global D "OWN PORT" /*TECH*/
+	global C "logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015"
+	cap teffects psmatch (logwages2017) ///
+					 (FDI2016 i.($D)##c.($C), probit),	///
+					  nneighbor(5) caliper(.05) osample(osa1) generate(p1)
+	// 2 observation with pscore too low
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.($D)##c.($C), probit) if osa1==0,	///
+					  nneighbor(5) caliper(.05) generate(p1) 
+
+	teffects overlap, ptlevel(1) saving($results\overl_WAGES_prob_noTECH_nn5_interact.gph, replace)
+	graph export $results\overl_WAGES_prob_noTECH_nn5_interact.pdf, as(pdf) replace
+	// Much better overlap
+	
+	tebalance summarize
+	// SD way below 10% for all variables. VR fine.
+
+	
+*___________________________________Probit [TFP] w/o TECH, using 5NN and Caliper
+	
+	cap drop osa1 
+	cap drop p1* 
+	cap teffects psmatch (TFP2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit),	///
+					  nneighbor(5) caliper(.05) osample(osa1) generate(p1)
+	 // 5 observations violate caliper
+	teffects psmatch (TFP2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit) if osa1==0,	///
+					  nneighbor(5) caliper(.05)  generate(p1) 
+	
+	teffects overlap, ptlevel(1) saving($results\overl_TFP_prob_noTECH_nn5.gph, replace)
+	graph export $results\overl_TFP_prob_noTECH_nn5.pdf, as(pdf) replace
+	// Much better overlap
+	
+	tebalance summarize
+	// SD way below 10% for all variables. VR fine.
+
+
+*____________Probit [TFP] w/o TECH including interactions, using 5NN and Caliper
+	
+	cap drop osa1 
+	cap drop p1* 
+	global D "OWN PORT" /*TECH*/
+	global C "logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015"
+	cap teffects psmatch (TFP2017) ///
+					 (FDI2016 i.($D)##c.($C), probit),	///
+					  nneighbor(5) caliper(.05) osample(osa1) generate(p1)
+	// 2 observation with pscore too low
+	teffects psmatch (TFP2017) ///
+					 (FDI2016 i.($D)##c.($C), probit) if osa1==0,	///
+					  nneighbor(5) caliper(.05) generate(p1) 
+
+	teffects overlap, ptlevel(1) saving($results\overl_TFP_prob_noTECH_nn5_interact.gph, replace)
+	graph export $results\overl_TFP_prob_noTECH_nn5_interact.pdf, as(pdf) replace
+	// Much better overlap
+	
+	tebalance summarize
+	// SD way below 10% for all variables. VR fine.	
+
+
+*------------------------------------------------------------------------------*
+*	PART 2.3: Estimation on wages and TFP divided into TECH subsamples
+*------------------------------------------------------------------------------*
+
+// all models use probit and nneigghbor (3) and no interactions
+// with nn5 and caliper .05 would need to drop too many variables
+// in general not useful to divide into TECH subsamples
+	
+*_________________________Probit [wages] w/o TECH but dividing sample, using 3NN
+
+** TECH==1	
+	cap drop osa1 
+	cap drop p1* 
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit) if TECH==1,	///
+					  nneighbor(3) osample(osa1) generate(p1)
+	
+	teffects overlap, ptlevel(1) saving($results\overl_WAGES_prob_TECH1.gph, replace)
+	graph export $results\overl_WAGES_prob_TECH1.pdf, as(pdf) replace
+	// bad overlap
+	
+	tebalance summarize
+	// SD very bad
+
+** TECH==2	
+	cap drop osa1 
+	cap drop p1* 
+	cap teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit) if TECH==2,	///
+					  nneighbor(3) osample(osa1) generate(p1)
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit) if TECH==2 & osa1==0,	///
+					  nneighbor(3) generate(p1)
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_WAGES_prob_TECH2.gph, replace)
+	graph export $results\overl_WAGES_prob_TECH2.pdf, as(pdf) replace
+	// bad overlap
+	
+	tebalance summarize
+	// SD very bad
+	
+** TECH==3	
+		cap drop osa1 
+	cap drop p1* 
+	cap teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit) if TECH==3,	///
+					  nneighbor(3) osample(osa1) generate(p1)
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit) if TECH==3 & osa1==0,	///
+					  nneighbor(3) generate(p1)
+
+	
+	teffects overlap, ptlevel(1) saving($results\overl_WAGES_prob_TECH3.gph, replace)
+	graph export $results\overl_WAGES_prob_TECH3.pdf, as(pdf) replace
+	// bad overlap
+	
+	tebalance summarize
+	// SD very bad
+
+** TECH==4
+ 	cap drop osa1 
+	cap drop p1* 
+	cap teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit) if TECH==4,	///
+					  nneighbor(3) osample(osa1) generate(p1)
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit) if TECH==4 & osa1==0,	///
+					  nneighbor(3) generate(p1)
+
+	
+	teffects overlap, ptlevel(1) saving($results\overl_WAGES_prob_TECH4.gph, replace)
+	graph export $results\overl_WAGES_prob_TECH4.pdf, as(pdf) replace
+	// bad overlap
+	
+	tebalance summarize
+	// SD very bad
+	
+*__Probit [wages] w/o TECH but dividing sample including interactions, using 3NN
+	
+	cap drop osa1 
+	cap drop p1* 
+	global D "OWN PORT" /*TECH*/
+	global C "logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015"
+	cap teffects psmatch (logwages2017) ///
+					 (FDI2016 i.($D)##c.($C), probit) if TECH==1,	///
+					  nneighbor(3) osample(osa1) generate(p1)
+	teffects psmatch (logwages2017) ///
+					 (FDI2016 i.($D)##c.($C), probit) if TECH==1 & osa1==0,	///
+					  nneighbor(3) generate(p1)
+
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_WAGES_prob_TECH1_interact.gph, replace)
+	graph export $results\overl_WAGES_prob_TECH1_interact.pdf, as(pdf) replace
+	// bad overlap
+	
+	tebalance summarize
+	// SD very bad
+
+	// no point in running interaction model with other subsamples 
+	
+*_________________________________Probit [TFP] w/o TECH, using 5NN and Caliper
+
+** TECH==1	
+	cap drop osa1 
+	cap drop p1* 
+	teffects psmatch (TFP2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit)if TECH==1,	///
+					  nneighbor(3) osample(osa1) generate(p1)
+		
+	teffects overlap, ptlevel(1) saving($results\overl_TFP_prob_TECH1.gph, replace)
+	graph export $results\overl_TFP_prob_TECH1.pdf, as(pdf) replace
+	// bad overlap
+	
+	tebalance summarize
+	// SD very bad
+
+** TECH==2
+	cap drop osa1 
+	cap drop p1* 
+	cap teffects psmatch (TFP2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit)if TECH==2,	///
+					  nneighbor(3) osample(osa1) generate(p1)
+	teffects psmatch (TFP2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit)if TECH==2 & osa1==0,	///
+					  nneighbor(3) generate(p1)
+		
+	
+	teffects overlap, ptlevel(1) saving($results\overl_TFP_prob_TECH2.gph, replace)
+	graph export $results\overl_TFP_prob_TECH2.pdf, as(pdf) replace
+	// bad overlap
+	
+	tebalance summarize
+	// SD very bad
+
+	
+** TECH==3	
+	cap drop osa1 
+	cap drop p1* 
+	cap teffects psmatch (TFP2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit)if TECH==3,	///
+					  nneighbor(3) osample(osa1) generate(p1)
+	teffects psmatch (TFP2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit)if TECH==3 & osa1==0,	///
+					  nneighbor(3) generate(p1)
+		
+	teffects overlap, ptlevel(1) saving($results\overl_TFP_prob_TECH3.gph, replace)
+	graph export $results\overl_TFP_prob_TECH3.pdf, as(pdf) replace
+	// bad overlap
+	
+	tebalance summarize
+	// SD very bad
+
+	
+** TECH==4	
+	cap drop osa1 
+	cap drop p1* 
+	cap teffects psmatch (TFP2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit)if TECH==4,	///
+					  nneighbor(3) osample(osa1) generate(p1)
+	teffects psmatch (TFP2017) ///
+					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
+					  logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, probit)if TECH==4 & osa1==0,	///
+					  nneighbor(3) generate(p1)
+		
+	teffects overlap, ptlevel(1) saving($results\overl_TFP_prob_TECH4.gph, replace)
+	graph export $results\overl_TFP_prob_TECH4.pdf, as(pdf) replace
+	// bad overlap
+	
+	tebalance summarize
+	// SD very bad
+	
+	
+	
+*____Probit [TFP] w/o TECH but dividing sample including interactions, using 3NN
+	
+	cap drop osa1 
+	cap drop p1* 
+	global D "OWN PORT" /*TECH*/
+	global C "logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015"
+	cap teffects psmatch (TFP2017) ///
+					 (FDI2016 i.($D)##c.($C), probit) if TECH==1,	///
+					  nneighbor(3) osample(osa1) generate(p1)
+	teffects psmatch (TFP2017) ///
+					 (FDI2016 i.($D)##c.($C), probit) if TECH==1 & osa1==0,	///
+					  nneighbor(3) generate(p1)
+
+					  
+	teffects overlap, ptlevel(1) saving($results\overl_TFP_prob_TECH1_interact.gph, replace)
+	graph export $results\overl_TFP_prob_TECH1_interact.pdf, as(pdf) replace
+	// bad overlap
+	
+	tebalance summarize
+	// SD very bad
+
+	// no point in running interaction model with other subsamples 
+		
+
+	
+	
+// BELOW HERE NOT IN ORDER not sure we need models below - partly same as before 
 	
 cap drop osa1 // overlap balance
 cap drop p1 // to save pscore 
@@ -353,8 +706,6 @@ graph export overlap_a1.pdf, as(pdf) replace
 tebalance summarize				
 			
 *Interactions for better pscores*			
-
-
 		
 cap drop osa1 // overlap balance
 cap drop p1 // to save pscore 
@@ -411,52 +762,4 @@ tebalance summarize
 
 
 								
-
-*_______________________________Deleting problematic variables: TECH and EXP2015
-	
-	cap drop osa1 
-	cap drop p1 
-	teffects psmatch (logwages2017) ///
-					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
-					  logwages2015 TFP2015 logemp2015 DEBTS2015 /*EXP2015*/ RD2015, probit),	///
-					  osample(osa1) generate(p1)
-					  
-	teffects overlap, ptlevel(1) saving($results\overl_prob_noTECHEXP.gph, replace)
-	graph export $results\overl_prob_noTECHEXP.pdf, as(pdf) replace
-	// Ok overlap except left-hand tail.
-	
-	tebalance summarize
-	// SD and VR fine.
-	
-*____________________________Deleting problematic variables: TECH and logemp2015
-	
-	cap drop osa1 
-	cap drop p1 
-	teffects psmatch (logwages2017) ///
-					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
-					  logwages2015 TFP2015 /*logemp2015*/ DEBTS2015 EXP2015 RD2015, probit),	///
-					  osample(osa1) generate(p1)
-					  
-	teffects overlap, ptlevel(1) saving($results\overl_prob_noTECHemp.gph, replace)
-	graph export $results\overl_prob_noTECHemp.pdf, as(pdf) replace
-	// Ok overlap, but tails still not so good.
-	
-	tebalance summarize
-	// SD way below 10% for all variables. VR fine.
-	
-*___________________Deleting problematic variables: TECH, EXP2015 and logemp2015
-	
-	cap drop osa1 
-	cap drop p1 
-	teffects psmatch (logwages2017) ///
-					 (FDI2016 i.OWN /*i.TECH*/ PORT ///
-					  logwages2015 TFP2015 /*logemp2015*/ DEBTS2015 /*EXP2015*/ RD2015, probit),	///
-					  osample(osa1) generate(p1)
-					  
-	teffects overlap, ptlevel(1) saving($results\overl_prob_noTECHEXPemp.gph, replace)
-	graph export $results\overl_prob_noTECHEXPemp.pdf, as(pdf) replace
-	// Very good overlap, left-hand tail still not perfect but acceptable.
-	
-	tebalance summarize
-	// SD very good, VR also fine.			
 
