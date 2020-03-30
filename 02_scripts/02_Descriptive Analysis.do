@@ -92,7 +92,7 @@
 *------------------------------------------------------------------------------*
 *	PART 2.2: Balance test of pre-treatment variables
 *------------------------------------------------------------------------------*	
-//			By treatment variable
+//		By treatment variable
 iebaltab 	TECH PORT ///
 			logwages2015 TFP2015 logemp2015 DEBTS2015 EXP2015 RD2015, ///
 			grpvar(FDI2016) save($results\baltest_byfdi_pre.xlsx) replace
